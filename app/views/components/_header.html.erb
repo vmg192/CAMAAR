@@ -1,0 +1,85 @@
+
+<!-- Main Navbar Container -->
+<header class="fixed top-0 left-0 right-0 w-full h-[60px] bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
+
+  <!-- Left Section: Menu Button + Page Title -->
+  <div class="flex items-center space-x-4">
+
+    <!-- Mobile Menu Toggle Button (Hamburger Icon) -->
+    <button data-action="click->sidebar#toggle" type="button" class="cursor-pointer p-2 text-gray-600 rounded-full hover:bg-gray-100 hover:text-gray-900">
+      <span class="sr-only">Open main menu</span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" 
+           stroke="currentColor" class="w-7 h-7">
+        <path stroke-linecap="round" stroke-linejoin="round" 
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
+
+    <!-- Tab / Page Title -->
+    <h1 class="font-roboto text-xl font-normal text-gray-900 truncate">
+      Tab name
+    </h1>
+  </div>
+
+  <!-- Right Section: Search Bar + Search Button + User Avatar -->
+  <div class="flex items-center space-x-4 md:space-x-6">
+
+    <!-- Desktop Search Bar -->
+    <div class="relative hidden md:block w-64">
+
+      <!-- Search Icon Inside Input -->
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
+             stroke="currentColor" class="w-5 h-5 text-gray-400">
+          <path stroke-linecap="round" stroke-linejoin="round" 
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+      </div>
+
+      <!-- Search Input -->
+      <input type="text" name="search" id="search"
+             class="block w-full py-1.5 pl-10 pr-3 text-gray-900 border border-gray-300 rounded-full bg-white 
+                    focus:border-transparent sm:text-sm"
+             placeholder="">
+    </div>
+
+    <!-- Mobile Search Button (Hidden on Desktop) -->
+    <button type="button" class="md:hidden text-gray-700 hover:text-gray-900 p-1">
+      <span class="sr-only">Search</span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
+           stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" 
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+      </svg>
+    </button>
+
+    <!-- User Avatar / Profile Button -->
+    
+    <div class="relative" 
+     data-controller="dropdown" 
+     data-action="click@window->dropdown#hide">
+
+      <button 
+        data-action="click->dropdown#toggle"
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-project-purple text-white font-medium text-lg cursor-pointer hover:bg-opacity-90 transition">
+        U
+      </button>
+
+      <div 
+        data-dropdown-target="menu"
+        class="hidden absolute right-0 mt-2 w-38 bg-white rounded-md shadow-lg py-1 z-50">
+        
+        <%= button_to session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm font-roboto text-black hover:bg-gray-100" do %>
+          Logout
+        <% end %>
+        
+
+      </div>
+    </div>
+
+
+
+
+  </div>
+</header>
+
