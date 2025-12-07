@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  enunciado: MyText
-  tipo: MyString
-  opcoes: 
+  enunciado: "Quanto é 1 + 1?"
+  tipo: "multipla_escolha"
+  opcoes: {}
   modelo: one
 
 two:
-  enunciado: MyText
-  tipo: MyString
-  opcoes: 
+  enunciado: "Descreva o sistema solar."
+  tipo: "dissertativa"
+  opcoes: {}
   modelo: two
