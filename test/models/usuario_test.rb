@@ -8,7 +8,7 @@ class UsuarioTest < ActiveSupport::TestCase
       matricula: "999999",
       nome: "Joao Teste",
       formacao: "Engenharia",
-      password: "senha123",   
+      password: "senha123",
       eh_admin: false
     )
     assert usuario.save, "Nao salvou o usuario valido"
