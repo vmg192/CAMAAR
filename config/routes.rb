@@ -10,6 +10,16 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # --- ROTAS DO INTEGRANTE 4 (RESPOSTAS) ---
+  # Define as rotas aninhadas para criar respostas dentro de um formulário
+  resources :formularios, only: [] do
+    resources :respostas, only: [ :index, :new, :create ]
+  end
+
+  # Rota solta para a listagem geral de respostas (dashboard do aluno)
+  get "respostas", to: "respostas#index"
+  # -----------------------------------------
+
   # Defines the root path route ("/")
   root "home#index"
 end
