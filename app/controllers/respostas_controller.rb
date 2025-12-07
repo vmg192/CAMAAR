@@ -5,6 +5,7 @@ class RespostasController < ApplicationController
   before_action :verificar_disponibilidade, only: [ :new, :create ]
   before_action :verificar_nao_respondeu, only: [ :new, :create ]
 
+
   def index
     # Listagem de formulários pendentes para o aluno
     @formularios_pendentes = Formulario.joins(:turma)
