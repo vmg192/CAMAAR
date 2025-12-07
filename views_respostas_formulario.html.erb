@@ -1,0 +1,41 @@
+<%# app/views/respostas/new.html.erb %>
+<h1>Responder Formulário: <%= @formulario.titulo %></h1>
+<p>Turma: <%= @formulario.turma.nome %></p>
+<p>Data Limite: <%= l(@formulario.data_limite, format: :long) %></p>
+
+<%= form_with(model: [@formulario, @resposta], url: formulario_respostas_path(@formulario), 
+    local: true) do |form| %>
+  
+  <% @questoes.each do |questao| %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Questão <%= questao.ordem %></h5>
+        <p class="card-text"><%= questao.enunciado %></p>
+        
+        <% case questao.tipo %>
+        <% when 'texto' %>
+          <%= text_area_tag "formulario[respostas][#{questao.id}]", '', 
+                class: 'form-control', rows: 3, required: true %>
+        <% when 'multipla_escolha' %>
+          <% questao.opcoes.split(';').each do |opcao| %>
+            <div class="form-check">
+              <%= radio_button_tag "formulario[respostas][#{questao.id}]", opcao, 
+                    false, class: 'form-check-input', required: true %>
+              <%= label_tag "formulario_respostas_#{questao.id}_#{opcao}", opcao, 
+                    class: 'form-check-label' %>
+            </div>
+          <% end %>
+        <% when 'escala' %>
+          <%= range_field_tag "formulario[respostas][#{questao.id}]", 3,
+                min: 1, max: 5, class: 'form-control-range', required: true %>
+          <small>1 (Discordo Totalmente) - 5 (Concordo Totalmente)</small>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="form-group">
+    <%= form.submit 'Enviar Respostas', class: 'btn btn-success' %>
+    <%= link_to 'Cancelar', respostas_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>

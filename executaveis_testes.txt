@@ -1,0 +1,7 @@
+# Executar testes RSpec
+#bundle exec rspec spec/models/resposta_spec.rb
+#bundle exec rspec spec/models/formulario_spec.rb
+#bundle exec rspec spec/requests/respostas_spec.rb
+
+# Executar testes Cucumber
+#bundle exec cucumber features/responder_formulario.feature

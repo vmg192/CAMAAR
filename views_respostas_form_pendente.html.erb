@@ -1,0 +1,30 @@
+<%# app/views/respostas/index.html.erb %>
+<h1>Formulários Pendentes</h1>
+
+<% if @formularios_pendentes.empty? %>
+  <p>Não há formulários pendentes no momento.</p>
+<% else %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Turma</th>
+        <th>Data Limite</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @formularios_pendentes.each do |formulario| %>
+        <tr>
+          <td><%= formulario.titulo %></td>
+          <td><%= formulario.turma.nome %></td>
+          <td><%= l(formulario.data_limite, format: :long) %></td>
+          <td>
+            <%= link_to 'Responder', new_formulario_resposta_path(formulario), 
+                class: 'btn btn-primary' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
