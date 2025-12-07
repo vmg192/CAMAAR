@@ -10,12 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_07_035036) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_07_041731) do
   create_table "modelos", force: :cascade do |t|
     t.string "titulo"
     t.boolean "ativo", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "perguntas", force: :cascade do |t|
+    t.text "enunciado"
+    t.string "tipo"
+    t.json "opcoes"
+    t.integer "modelo_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["modelo_id"], name: "index_perguntas_on_modelo_id"
   end
 
   create_table "usuarios", force: :cascade do |t|
@@ -32,4 +42,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_07_035036) do
     t.index ["login"], name: "index_usuarios_on_login", unique: true
     t.index ["matricula"], name: "index_usuarios_on_matricula", unique: true
   end
+
+  add_foreign_key "perguntas", "modelos"
 end
