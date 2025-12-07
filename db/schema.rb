@@ -13,10 +13,16 @@
 ActiveRecord::Schema[8.0].define(version: 2025_12_07_024056) do
   create_table "usuarios", force: :cascade do |t|
     t.string "login"
-    t.string "email"
     t.string "matricula"
+    t.string "nome"
+    t.string "email"
+    t.string "formacao"
     t.string "password_digest"
+    t.boolean "eh_admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_usuarios_on_email", unique: true
+    t.index ["login"], name: "index_usuarios_on_login", unique: true
+    t.index ["matricula"], name: "index_usuarios_on_matricula", unique: true
   end
 end
