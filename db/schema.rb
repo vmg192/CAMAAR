@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_07_024056) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_07_035036) do
+  create_table "modelos", force: :cascade do |t|
+    t.string "titulo"
+    t.boolean "ativo", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "usuarios", force: :cascade do |t|
     t.string "login"
     t.string "matricula"
