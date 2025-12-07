@@ -1,6 +1,6 @@
 require "test_helper"
 
-class matriculaTurmaTest < ActiveSupport::TestCase
+class MatriculaTurmaTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
