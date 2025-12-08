@@ -118,9 +118,16 @@ class SigaaImportService
     user.nome = p_data['nome']
     user.email = p_data['email']
 
+    generated_password = nil
+    if is_new_user
+      generated_password = SecureRandom.hex(8)
+      user.password = generated_password
+    end
+
     if user.save
       if is_new_user
         @results[:usuarios_created] += 1
+        UserMailer.cadastro_email(user, generated_password).deliver_now
       else
         @results[:usuarios_updated] += 1
       end
