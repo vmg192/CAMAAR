@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  # --- ROTAS DE AVALIACOES ---
+  resources :avaliacoes, only: [:index, :create] do
+    collection do
+      get :gestao_envios
+    end
+  end
   get "home/index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
