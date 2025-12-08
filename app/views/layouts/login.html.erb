@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Camaar" %></title>
+    <title><%= content_for(:title) || "Login" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -19,19 +19,15 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="sidebar" 
-    class="bg-project-background-gray m-0 p-0 h-screen w-screen flex flex-col overflow-hidden">
-    <%= render "components/header"%>
-    <div class="flex flex-1 w-full h-full overflow-hidden relative">
+  <body>
+    <%# Remover o comentário para verificar o funcionamento do tailwind
+    Remover essa parte quando alguma tela for implementada %>
+    <%# <div class="bg-blue-600 text-white text-center p-4 font-bold text-xl">
+      Tailwind funcionando
+    </div> %>
 
-      <%= render "components/sidebar" %>
-
-      <main class="flex-1 h-full overflow-y-auto p-4">
-        <%= render "components/card" %>
-        <%= yield %>
-      </main>
-
-    </div>
-
+    <main class="container mx-auto mt-10 px-5">
+      <%= yield %>
+    </main>
   </body>
 </html>
