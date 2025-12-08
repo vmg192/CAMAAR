@@ -10,7 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_06_015904) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
+  create_table "modelos", force: :cascade do |t|
+    t.string "titulo"
+    t.boolean "ativo", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "perguntas", force: :cascade do |t|
+    t.text "enunciado"
+    t.string "tipo"
+    t.json "opcoes"
+    t.integer "modelo_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["modelo_id"], name: "index_perguntas_on_modelo_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -25,8 +42,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_06_015904) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "login"
+    t.string "matricula"
+    t.string "nome"
+    t.string "formacao"
+    t.boolean "eh_admin", default: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["login"], name: "index_users_on_login", unique: true
+    t.index ["matricula"], name: "index_users_on_matricula", unique: true
   end
 
+  add_foreign_key "perguntas", "modelos"
   add_foreign_key "sessions", "users"
 end
