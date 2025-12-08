@@ -13,7 +13,7 @@ RSpec.describe Avaliacao, type: :model do
     it 'pertence a professor_alvo como Usuario (opcional)' do
       assoc = described_class.reflect_on_association(:professor_alvo)
       expect(assoc.macro).to eq :belongs_to
-      expect(assoc.class_name).to eq 'Usuario'
+      expect(assoc.class_name).to eq 'User'
       expect(assoc.options[:optional]).to eq true
     end
   end

@@ -1,4 +1,6 @@
 class AvaliacoesController < ApplicationController
+  allow_unauthenticated_access only: %i[ index create gestao_envios ]
+
   def index
     @avaliacoes = Avaliacao.all
   end

@@ -1,0 +1,13 @@
+<body data-controller="sidebar" class="bg-project-background-gray">
+
+  <%= render "components/header" %>
+
+  <div class="flex">
+    <%= render "components/sidebar" %>
+
+    <main class="flex-1 p-4 mt-[60px]">
+      <%= yield %>
+    </main>
+  </div>
+  
+</body>
