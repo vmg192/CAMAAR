@@ -1,0 +1,48 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Resultados da Avaliação</h1>
+    <%= link_to "Voltar", gestao_envios_avaliacoes_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+
+  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="mb-4">
+      <p class="text-gray-700 text-sm font-bold mb-2">Turma: <span class="font-normal"><%= @avaliacao.turma.codigo %> - <%= @avaliacao.turma.nome %></span></p>
+      <p class="text-gray-700 text-sm font-bold mb-2">Template: <span class="font-normal"><%= @avaliacao.modelo.titulo %></span></p>
+    </div>
+
+    <% if @respostas.any? %>
+      <div class="flex justify-end mb-4">
+        <%= link_to "Download CSV", resultados_avaliacao_path(@avaliacao, format: :csv), class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full leading-normal">
+          <thead>
+            <tr>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Matrícula</th>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aluno</th>
+              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Conteúdo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @respostas.each do |resposta| %>
+              <tr>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><%= resposta.aluno&.matricula %></td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><%= resposta.aluno&.nome %></td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><%= resposta.conteudo %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+        <p class="font-bold">Atenção</p>
+        <p>Nenhuma resposta encontrada para esta avaliação.</p>
+        <% if flash[:alert] %>
+          <p class="text-xs mt-1"><%= flash[:alert] %></p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

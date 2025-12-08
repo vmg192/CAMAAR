@@ -3,6 +3,7 @@ class Resposta < ApplicationRecord
   belongs_to :aluno, class_name: "User"
   belongs_to :formulario
   belongs_to :questao
+  belongs_to :avaliacao, optional: true
 
   validates :aluno_id, presence: true
   validates :formulario_id, presence: true
