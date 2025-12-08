@@ -26,12 +26,14 @@ class SigaaImportServiceTest < ActiveSupport::TestCase
   end
 
   test "importa turmas e usuarios com sucesso" do
-    service = SigaaImportService.new(@file_path)
-    result = service.process
+    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
+      service = SigaaImportService.new(@file_path)
+      result = service.process
 
-    assert_empty result[:errors]
-    assert_equal 1, result[:turmas_created]
-    assert_equal 1, result[:usuarios_created]
+      assert_empty result[:errors]
+      assert_equal 1, result[:turmas_created]
+      assert_equal 1, result[:usuarios_created]
+    end
 
     turma = Turma.find_by(codigo: "TURMA123")
     assert_not_nil turma
@@ -40,6 +42,7 @@ class SigaaImportServiceTest < ActiveSupport::TestCase
     user = User.find_by(matricula: "2023001")
     assert_not_nil user
     assert_equal "João Silva", user.nome
+    assert user.authenticate(user.password) if user.respond_to?(:authenticate) # Optional verification if has_secure_password
     
     matricula = MatriculaTurma.find_by(turma: turma, user: user)
     assert_not_nil matricula
