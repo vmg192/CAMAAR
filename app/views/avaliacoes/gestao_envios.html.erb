@@ -57,6 +57,12 @@
                 %>
                 <%= f.submit "Gerar Avaliação", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out cursor-pointer" %>
               <% end %>
+              
+              <% if (ultima_avaliacao = turma.avaliacoes.last) %>
+                <div class="mt-2">
+                  <%= link_to "Ver Resultados (Última)", resultados_avaliacao_path(ultima_avaliacao), class: "text-blue-500 hover:text-blue-800 text-xs font-semibold" %>
+                </div>
+              <% end %>
             </td>
           </tr>
         <% end %>

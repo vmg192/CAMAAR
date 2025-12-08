@@ -4,6 +4,9 @@ Rails.application.routes.draw do
     collection do
       get :gestao_envios
     end
+    member do
+      get :resultados
+    end
   end
 
   resource :session

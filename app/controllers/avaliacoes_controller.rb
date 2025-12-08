@@ -38,4 +38,25 @@ class AvaliacoesController < ApplicationController
       redirect_to gestao_envios_avaliacoes_path, alert: "Erro ao criar avaliação: #{@avaliacao.errors.full_messages.join(', ')}"
     end
   end
+
+  def resultados
+    @avaliacao = Avaliacao.find(params[:id])
+    # Pré-carrega dependências para evitar N+1.
+    # Nota: a associação 'respostas' existe no Modelo, mesmo que a tabela esteja pendente.
+    # Usamos array vazio como fallback por segurança se o BD falhar.
+    begin
+      @respostas = @avaliacao.respostas.includes(:aluno)
+    rescue ActiveRecord::StatementInvalid
+      @respostas = []
+      flash.now[:alert] = "A tabela de respostas ainda não está disponível."
+    end
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data CsvFormatterService.new(@avaliacao).generate,
+                  filename: "resultados-avaliacao-#{@avaliacao.id}-#{Date.today}.csv"
+      end
+    end
+  end
 end
