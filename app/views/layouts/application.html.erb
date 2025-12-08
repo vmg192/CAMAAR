@@ -10,24 +10,19 @@
 
     <%= yield :head %>
 
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%# Remover o comentário para verificar o funcionamento do tailwind
-    Remover essa parte quando alguma tela for implementada %>
-    <%# <div class="bg-blue-600 text-white text-center p-4 font-bold text-xl">
-      Tailwind funcionando
-    </div> %>
-
-    <main class="container mx-auto mt-10 px-5">
-      <%= yield %>
-    </main>
+    <%= yield %>
   </body>
 </html>
