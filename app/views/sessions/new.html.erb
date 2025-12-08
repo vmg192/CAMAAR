@@ -1,0 +1,45 @@
+<body class= "font-roboto bg-project-background-gray"> 
+  <div class="h-1/2 flex items-center justify-center"> 
+    <div class="flex items-center justify-center w-[398] h-[525] bg-white pt-[60px] pr-[40px] pl-[40px] pb-[60px] gap-6">
+      <div>
+        <% if alert = flash[:alert] %>
+          <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+        <% end %>
+
+        <% if notice = flash[:notice] %>
+          <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+        <% end %>
+
+        <h1 class="text-center font-normal text-2xl">LOGIN</h1>
+
+        <%= form_with url: session_url, class: "contents" do |form| %>
+          <div class="my-5">
+            <p> Email </p>
+            <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "aluno@aluno.unb.br", value: params[:email_address], class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
+          </div>
+
+          <div class="my-5">
+            <p> Senha </p>
+            <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
+          </div>
+
+          <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
+            <div class="inline">
+              <%= form.submit "Entrar", class: "w-full text-center rounded-md px-3.5 py-2.5 bg-project-green text-white inline-block font-medium cursor-pointer" %>
+            </div>
+
+            <div class="mt-4 text-sm text-gray-500 sm:mt-0">
+              <%= link_to "Forgot password?", new_password_path, class: "text-gray-700 underline hover:no-underline" %>
+            </div>
+          </div>
+        <% end %> 
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center w-[500] h-[525] bg-project-purple">
+        <h1 class="text-[56px] text-white text-center font-normal"> Bem vindo<br/> ao<br/> Camaar </h1>
+    </div> 
+    
+  </div>
+</body>
+
