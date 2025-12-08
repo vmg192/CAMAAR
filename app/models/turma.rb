@@ -1,6 +1,5 @@
 class Turma < ApplicationRecord
-  validates :codigo, :nome, :semestre, presence: true
-
-  has_many :matricula_turmas
-  has_many :usuarios, through: :matricula_turmas
+  has_many :avaliacoes
+  # has_many :matricula_turmas
+  has_many :users, through: :matricula_turmas
 end

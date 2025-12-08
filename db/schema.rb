@@ -11,6 +11,29 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
+  create_table "avaliacoes", force: :cascade do |t|
+    t.integer "turma_id", null: false
+    t.integer "modelo_id", null: false
+    t.integer "professor_alvo_id"
+    t.datetime "data_inicio"
+    t.datetime "data_fim"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["modelo_id"], name: "index_avaliacoes_on_modelo_id"
+    t.index ["professor_alvo_id"], name: "index_avaliacoes_on_professor_alvo_id"
+    t.index ["turma_id"], name: "index_avaliacoes_on_turma_id"
+  end
+
+  create_table "matricula_turmas", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "turma_id", null: false
+    t.string "papel"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["turma_id"], name: "index_matricula_turmas_on_turma_id"
+    t.index ["user_id"], name: "index_matricula_turmas_on_user_id"
+  end
+
   create_table "modelos", force: :cascade do |t|
     t.string "titulo"
     t.boolean "ativo", default: true
@@ -37,6 +60,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "turmas", force: :cascade do |t|
+    t.string "codigo"
+    t.string "nome"
+    t.string "semestre"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
@@ -52,6 +83,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
     t.index ["matricula"], name: "index_users_on_matricula", unique: true
   end
 
+  add_foreign_key "avaliacoes", "modelos"
+  add_foreign_key "avaliacoes", "turmas"
+  add_foreign_key "avaliacoes", "users", column: "professor_alvo_id"
+  add_foreign_key "matricula_turmas", "turmas"
+  add_foreign_key "matricula_turmas", "users"
   add_foreign_key "perguntas", "modelos"
   add_foreign_key "sessions", "users"
 end
