@@ -1,6 +1,6 @@
 
 <!-- Main Navbar Container -->
-<header class="fixed top-0 left-0 right-0 w-full h-[60px] bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
+<header class="relative top-0 left-0 right-0 w-full h-[60px] bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
 
   <!-- Left Section: Menu Button + Page Title -->
   <div class="flex items-center space-x-4">
@@ -17,7 +17,7 @@
 
     <!-- Tab / Page Title -->
     <h1 class="font-roboto text-xl font-normal text-gray-900 truncate">
-      Tab name
+      Avaliações
     </h1>
   </div>
 
@@ -68,17 +68,12 @@
       <div 
         data-dropdown-target="menu"
         class="hidden absolute right-0 mt-2 w-38 bg-white rounded-md shadow-lg py-1 z-50">
-        
-        <%= button_to session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm font-roboto text-black hover:bg-gray-100" do %>
+        <%= Current.user.email_address%>
+        <%= button_to session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm font-roboto text-black hover:bg-gray-100 cursor-pointer" do %>
           Logout
         <% end %>
-        
-
       </div>
     </div>
-
-
-
 
   </div>
 </header>
