@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_08_190239) do
   create_table "avaliacoes", force: :cascade do |t|
     t.integer "turma_id", null: false
     t.integer "modelo_id", null: false
@@ -51,6 +51,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
     t.index ["modelo_id"], name: "index_perguntas_on_modelo_id"
   end
 
+  create_table "respostas", force: :cascade do |t|
+    t.text "conteudo"
+    t.text "snapshot_enunciado"
+    t.json "snapshot_opcoes"
+    t.integer "submissao_id", null: false
+    t.integer "questao_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["questao_id"], name: "index_respostas_on_questao_id"
+    t.index ["submissao_id"], name: "index_respostas_on_submissao_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -58,6 +70,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "submissoes", force: :cascade do |t|
+    t.datetime "data_envio"
+    t.integer "aluno_id", null: false
+    t.integer "avaliacao_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["aluno_id"], name: "index_submissoes_on_aluno_id"
+    t.index ["avaliacao_id"], name: "index_submissoes_on_avaliacao_id"
   end
 
   create_table "turmas", force: :cascade do |t|
@@ -89,5 +111,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_012954) do
   add_foreign_key "matricula_turmas", "turmas"
   add_foreign_key "matricula_turmas", "users"
   add_foreign_key "perguntas", "modelos"
+  add_foreign_key "respostas", "perguntas", column: "questao_id"
+  add_foreign_key "respostas", "submissoes", column: "submissao_id"
   add_foreign_key "sessions", "users"
+  add_foreign_key "submissoes", "avaliacoes"
+  add_foreign_key "submissoes", "users", column: "aluno_id"
 end

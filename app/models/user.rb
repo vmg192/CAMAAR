@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :matricula_turmas
   has_many :turmas, through: :matricula_turmas
+  has_many :submissoes, class_name: 'Submissao', foreign_key: :aluno_id, dependent: :destroy
 
   validates :email_address, presence: true, uniqueness: true
   validates :login, presence: true, uniqueness: true

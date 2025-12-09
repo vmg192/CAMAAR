@@ -1,0 +1,258 @@
+<%# app/views/modelos/_form.html.erb %>
+<%= form_with(model: modelo, local: true, class: "space-y-8") do |form| %>
+  <% if modelo.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4 border border-red-200">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(modelo.errors.count, "erro") %> impediram este modelo de ser salvo:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% modelo.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
+      <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        Informações do Modelo
+      </h2>
+    </div>
+    <div class="px-6 py-6">
+      <div class="grid grid-cols-1 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 required">
+            Título do Modelo
+          </label>
+          <%= form.text_field :titulo, 
+                class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                placeholder: "Ex: Avaliação de Professor" %>
+          <p class="mt-1 text-sm text-gray-500">Título único para identificar o modelo</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">
+            Ativo
+          </label>
+          <%= form.check_box :ativo, class: "mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+          <span class="ml-2 text-sm text-gray-500">Marque para tornar este modelo disponível para uso</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-green-100">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Questões do Formulário
+        </h2>
+        <button type="button" 
+                id="add-question" 
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Adicionar Questão
+        </button>
+      </div>
+    </div>
+    
+    <div class="px-6 py-6">
+      <div id="questions" class="space-y-4">
+        <%= form.fields_for :perguntas do |pergunta_form| %>
+          <%= render 'pergunta_fields', f: pergunta_form %>
+        <% end %>
+      </div>
+      
+      <% if modelo.perguntas.empty? %>
+        <div class="mt-4 rounded-md bg-yellow-50 p-4 border border-yellow-200">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-yellow-800">Atenção</h3>
+              <div class="mt-2 text-sm text-yellow-700">
+                <p>Um modelo deve ter pelo menos uma questão para ser salvo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <%= link_to modelos_path, class: "btn-secondary flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Cancelar
+    <% end %>
+    
+    <%= form.submit modelo.persisted? ? 'Atualizar Modelo' : 'Salvar Modelo', 
+          class: "btn-primary flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let questionCount = <%= modelo.perguntas.size || 0 %>;
+    const questionsContainer = document.getElementById('questions');
+    
+    // Adicionar nova questão
+    document.getElementById('add-question').addEventListener('click', function() {
+      questionCount++;
+      
+      const newQuestionHTML = `
+        <div class="nested-fields" id="question-${questionCount}">
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-medium text-gray-900 flex items-center gap-2">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold">
+                ${questionCount}
+              </span>
+              Questão ${questionCount}
+            </h4>
+            <button type="button" 
+                    onclick="removeQuestion(${questionCount})"
+                    class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+              Remover
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-gray-700 required">
+                Enunciado
+              </label>
+              <input type="text" 
+                     name="modelo[perguntas_attributes][${questionCount}][enunciado]" 
+                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                     placeholder="Digite o enunciado da questão..."
+                     required>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 required">
+                Tipo de Questão
+              </label>
+              <select name="modelo[perguntas_attributes][${questionCount}][tipo]"
+                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onchange="showOptions(${questionCount}, this.value)"
+                      required>
+                <option value="">Selecione...</option>
+                <option value="texto_longo">Texto Longo</option>
+                <option value="texto_curto">Texto Curto</option>
+                <option value="multipla_escolha">Múltipla Escolha</option>
+                <option value="checkbox">Checkbox (Múltipla Seleção)</option>
+                <option value="escala">Escala Likert (1-5)</option>
+                <option value="data">Data</option>
+                <option value="hora">Hora</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700">
+                Ordem
+              </label>
+              <input type="number" 
+                     name="modelo[perguntas_attributes][${questionCount}][ordem]" 
+                     value="${questionCount}"
+                     min="1"
+                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+          </div>
+          
+          <div id="options-${questionCount}" class="pergunta-options hidden">
+            <label class="block text-sm font-medium text-gray-700">
+              Opções (separadas por ponto e vírgula)
+            </label>
+            <input type="text" 
+                   name="modelo[perguntas_attributes][${questionCount}][opcoes]" 
+                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                   placeholder="Excelente;Bom;Regular;Ruim">
+            <p class="mt-1 text-xs text-gray-500">
+              Para questões do tipo "Múltipla Escolha" e "Checkbox"
+            </p>
+          </div>
+        </div>
+      `;
+      
+      questionsContainer.insertAdjacentHTML('beforeend', newQuestionHTML);
+    });
+    
+    // Mostrar/ocultar opções baseado no tipo
+    window.showOptions = function(questionId, questionType) {
+      const optionsDiv = document.getElementById(`options-${questionId}`);
+      if (questionType === 'multipla_escolha' || questionType === 'checkbox') {
+        optionsDiv.classList.remove('hidden');
+      } else {
+        optionsDiv.classList.add('hidden');
+      }
+    };
+    
+    // Remover questão
+    window.removeQuestion = function(questionId) {
+      const questionDiv = document.getElementById(`question-${questionId}`);
+      if (questionDiv) {
+        questionDiv.remove();
+        
+        // Atualizar números das questões restantes
+        const remainingQuestions = questionsContainer.querySelectorAll('.nested-fields');
+        remainingQuestions.forEach((div, index) => {
+          const header = div.querySelector('h4');
+          const numberSpan = div.querySelector('span');
+          const orderInput = div.querySelector('input[type="number"]');
+          
+          if (header) {
+            header.innerHTML = header.innerHTML.replace(/Questão \d+/, `Questão ${index + 1}`);
+          }
+          
+          if (numberSpan) {
+            numberSpan.textContent = index + 1;
+          }
+          
+          if (orderInput) {
+            orderInput.value = index + 1;
+          }
+        });
+        
+        questionCount = remainingQuestions.length;
+      }
+    };
+    
+    // Inicializar controles para questões existentes
+    document.querySelectorAll('select[name*="[tipo]"]').forEach(select => {
+      const match = select.name.match(/perguntas_attributes\[(\d+)\]/);
+      if (match) {
+        const questionId = match[1];
+        showOptions(questionId, select.value);
+      }
+    });
+  });
+</script>

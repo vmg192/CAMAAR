@@ -4,6 +4,9 @@
   
   <nav class="flex-1 flex flex-col overflow-y-auto">
     <%= render "components/frameRoxoMenuLateral"%>
+    <% if Current.session&.user&.eh_admin? %>
+      <%= render "components/frameBrancoMenuLateral" %>
+    <% end %>
   </nav>
 
 </aside>

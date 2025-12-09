@@ -1,0 +1,40 @@
+<% if Current.session&.user&.eh_admin? %>
+  <%= render "components/dashBoardAdmin" %>
+<% else %>
+  <%# Dashboard do Aluno - Feature 109: Visualizar Formulários Pendentes %>
+  <div class="p-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Avaliações Pendentes</h1>
+    
+    <% if @avaliacoes_pendentes && @avaliacoes_pendentes.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @avaliacoes_pendentes.each do |avaliacao| %>
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer" 
+               onclick="window.location.href='<%= new_avaliacao_resposta_path(avaliacao) %>'">>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">
+              <%= avaliacao.turma.nome %>
+            </h3>
+            <p class="text-sm text-gray-600 mb-1">
+              <%= avaliacao.turma.semestre %>
+            </p>
+            <p class="text-md text-gray-700 font-medium">
+              Professor: <%= avaliacao.professor_alvo&.nome || "Geral" %>
+            </p>
+            <% if avaliacao.data_fim %>
+              <p class="text-xs text-gray-500 mt-4">
+                Prazo: <%= l(avaliacao.data_fim, format: :short) %>
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-12 text-center">
+        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-700 mb-2">Nenhuma avaliação pendente</h3>
+        <p class="text-gray-500">Você respondeu todas as avaliações disponíveis ou não há avaliações ativas no momento.</p>
+      </div>
+    <% end %>
+  </div>
+<% end %>

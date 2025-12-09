@@ -9,9 +9,9 @@ Quero editar e/ou deletar um template que eu criei sem afetar os formulários j�
 A fim de organizar os templates existentes
 
    Contexto:
-        Dado que um 'administrador' está logado
+        Dado que um "administrador" está logado
         E está na tela 'Templates'
-        E o banco de dados está 'carregado'
+        E o banco de dados está "carregado"
 
 
 @112.1

@@ -11,22 +11,20 @@ RSpec.describe CsvFormatterService do
     
     let(:aluno1) { double('User', matricula: '123', nome: 'Alice') }
     let(:aluno2) { double('User', matricula: '456', nome: 'Bob') }
-    
-    let(:resposta_a1_q1) { double('Resposta', aluno: aluno1, conteudo: 'Ans 1A') }
-    let(:resposta_a1_q2) { double('Resposta', aluno: aluno1, conteudo: 'Ans 1B') }
-    let(:resposta_a2_q1) { double('Resposta', aluno: aluno2, conteudo: 'Ans 2A') }
 
-    # Estrutura agrupada por aluno simulando resultado de query ActiveRecord
-    let(:grouped_responses) do
-      {
-        aluno1 => [resposta_a1_q1, resposta_a1_q2],
-        aluno2 => [resposta_a2_q1]
-      }
-    end
+    # Respostas não tem mais aluno direto, mas através de submissão
+    let(:resposta_a1_q1) { double('Resposta', conteudo: 'Ans 1A') }
+    let(:resposta_a1_q2) { double('Resposta', conteudo: 'Ans 1B') }
+    let(:resposta_a2_q1) { double('Resposta', conteudo: 'Ans 2A') }
+
+    # Submissoes ligando aluno e respostas
+    let(:submissao1) { double('Submissao', aluno: aluno1, respostas: [resposta_a1_q1, resposta_a1_q2]) }
+    let(:submissao2) { double('Submissao', aluno: aluno2, respostas: [resposta_a2_q1]) }
 
     before do
-      # Mock da cadeia: avaliacao.respostas.includes.group_by
-      allow(avaliacao).to receive_message_chain(:respostas, :includes, :group_by).and_return(grouped_responses)
+      # Mock da cadeia: avaliacao.submissoes.includes.each
+      # Simulando o comportamento do loop no service
+      allow(avaliacao).to receive_message_chain(:submissoes, :includes).and_return([submissao1, submissao2])
     end
 
     it 'gera uma string CSV válida com cabeçalhos e linhas' do

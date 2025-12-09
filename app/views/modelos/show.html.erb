@@ -1,0 +1,69 @@
+<%# app/views/modelos/show.html.erb %>
+<div class="space-y-6">
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900"><%= @modelo.titulo %></h1>
+      <div class="mt-4 flex items-center gap-4 text-sm text-gray-500">
+        <span class="inline-flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          Criado em <%= l(@modelo.created_at, format: :long) %>
+        </span>
+        <span class="inline-flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+          <%= pluralize(@modelo.perguntas.count, 'questão', 'questões') %>
+        </span>
+      </div>
+    </div>
+    
+    <div class="flex gap-2">
+      <%= link_to edit_modelo_path(@modelo), class: "btn-secondary flex items-center gap-2" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        Editar
+      <% end %>
+      
+      <%= link_to modelos_path, class: "btn-secondary flex items-center gap-2" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Voltar
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-5 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">Questões do Modelo</h2>
+    </div>
+    
+    <div class="divide-y divide-gray-200">
+      <% @modelo.perguntas.order(:ordem).each do |pergunta| %>
+        <div class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold">
+                <%= pergunta.ordem %>
+              </span>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3 mb-2">
+                <h3 class="text-base font-medium text-gray-900">
+                  <%= pergunta.enunciado %>
+                </h3>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                  <%= pergunta.tipo_humanizado %>
+                </span>
+              </div>
+              
+              <% if pergunta.requer_opcoes? && pergunta.lista_opcoes.any? %>
+                <div class="mt-2">
+                  <p class="text-sm font-medium text-gray-700">Opções:</p>
+                  <div class="mt-1 flex flex-wrap gap-2">
+                    <% pergunta.lista_opcoes.each do |opcao| %>
+                      <span class

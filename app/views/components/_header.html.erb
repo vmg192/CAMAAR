@@ -68,7 +68,7 @@
       <div 
         data-dropdown-target="menu"
         class="hidden absolute right-0 mt-2 w-38 bg-white rounded-md shadow-lg py-1 z-50">
-        <%= Current.user.email_address%>
+        <%= Current.user&.email_address%>
         <%= button_to session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm font-roboto text-black hover:bg-gray-100 cursor-pointer" do %>
           Logout
         <% end %>

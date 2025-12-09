@@ -1,41 +1,107 @@
-<%# app/views/respostas/new.html.erb %>
-<h1>Responder Formulário: <%= @formulario.titulo %></h1>
-<p>Turma: <%= @formulario.turma.nome %></p>
-<p>Data Limite: <%= l(@formulario.data_limite, format: :long) %></p>
+<%# app/views/respostas/new.html.erb - Feature 99: Responder Avaliação %>
+<div class="max-w-4xl mx-auto p-6">
+  <div class="mb-6 bg-white rounded-lg shadow-sm p-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">
+      Avaliação - <%= @avaliacao.turma.nome %>
+    </h1>
+    <p class="text-gray-600 mb-1"><%= @avaliacao.turma.semestre %></p>
+    <% if @avaliacao.professor_alvo %>
+      <p class="text-gray-700 font-medium">Professor: <%= @avaliacao.professor_alvo.nome %></p>
+    <% end %>
+    <% if @avaliacao.data_fim %>
+      <p class="text-sm text-gray-500 mt-2">
+        📅 Prazo: <%= l(@avaliacao.data_fim, format: :short) %>
+      </p>
+    <% end %>
+  </div>
 
-<%= form_with(model: [@formulario, @resposta], url: formulario_respostas_path(@formulario), 
-    local: true) do |form| %>
-  
-  <% @questoes.each do |questao| %>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Questão <%= questao.ordem %></h5>
-        <p class="card-text"><%= questao.enunciado %></p>
-        
-        <% case questao.tipo %>
-        <% when 'texto' %>
-          <%= text_area_tag "formulario[respostas][#{questao.id}]", '', 
-            class: 'form-control', rows: 3, required: true %>
-        <% when 'multipla_escolha' %>
-          <% questao.opcoes.split(';').each do |opcao| %>
-            <div class="form-check">
-              <%= radio_button_tag "formulario[respostas][#{questao.id}]", opcao, 
-                    false, class: 'form-check-input', required: true %>
-              <%= label_tag "formulario_respostas_#{questao.id}_#{opcao}", opcao, 
-                    class: 'form-check-label' %>
+  <%= form_with model: @submissao, url: avaliacao_respostas_path(@avaliacao), class: "space-y-6" do |form| %>
+    <%= form.fields_for :respostas do |resposta_form| %>
+      <% pergunta = @perguntas[resposta_form.index] %>
+      <% if pergunta %>
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <label class="block text-lg font-medium text-gray-900 mb-4">
+            <%= resposta_form.index + 1 %>. <%= pergunta.enunciado %>
+          </label>
+          
+          <%= resposta_form.hidden_field :pergunta_id, value: pergunta.id %>
+          
+          <% case pergunta.tipo %>
+          <% when 'texto_longo', 'texto' %>
+            <%= resposta_form.text_area :conteudo, 
+                class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500",
+                rows: 4,
+                placeholder: "Digite sua resposta...",
+                required: true %>
+                
+          <% when 'texto_curto' %>
+            <%= resposta_form.text_field :conteudo,
+                class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500",
+                placeholder: "Digite sua resposta...",
+                required: true %>
+                
+          <% when 'multipla_escolha' %>
+            <div class="mt-2 space-y-2">
+              <% pergunta.lista_opcoes.each do |opcao| %>
+                <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                  <%= resposta_form.radio_button :conteudo, opcao, 
+                      class: "mr-3 text-purple-600 focus:ring-purple-500",
+                      required: true %>
+                  <span class="text-gray-700"><%= opcao %></span>
+                </label>
+              <% end %>
             </div>
+            
+          <% when 'checkbox' %>
+            <div class="mt-2 space-y-2">
+              <% pergunta.lista_opcoes.each do |opcao| %>
+                <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                  <%= check_box_tag "submissao[respostas_attributes][#{resposta_form.index}][conteudo][]", 
+                      opcao, false, 
+                      class: "mr-3 rounded text-purple-600 focus:ring-purple-500" %>
+                  <span class="text-gray-700"><%= opcao %></span>
+                </label>
+              <% end %>
+            </div>
+            
+          <% when 'escala' %>
+            <div class="mt-4">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-gray-600">1 - Péssimo</span>
+                <span class="text-sm text-gray-600">5 - Excelente</span>
+              </div>
+              <div class="flex justify-between items-center px-2">
+                <% (1..5).each do |valor| %>
+                  <label class="flex flex-col items-center cursor-pointer">
+                    <%= resposta_form.radio_button :conteudo, valor, 
+                        class: "mb-2 w-5 h-5 text-purple-600 focus:ring-purple-500",
+                        required: true %>
+                    <span class="text-sm font-medium text-gray-700"><%= valor %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+            
+          <% when 'data' %>
+            <%= resposta_form.date_field :conteudo,
+                class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500",
+                required: true %>
+                
+          <% when 'hora' %>
+            <%= resposta_form.time_field :conteudo,
+                class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500",
+                required: true %>
           <% end %>
-        <% when 'escala' %>
-          <%= range_field_tag "formulario[respostas][#{questao.id}]", 3,
-                min: 1, max: 5, class: 'form-control-range', required: true %>
-          <small>1 (Discordo Totalmente) - 5 (Concordo Totalmente)</small>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="flex justify-end gap-4 pt-6">
+      <%= link_to "Cancelar", root_path, 
+          class: "px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors" %>
+      <%= form.submit "Enviar Avaliação", 
+          class: "px-8 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors cursor-pointer font-medium shadow-lg",
+          data: { turbo_confirm: "Tem certeza que deseja enviar? Você não poderá alterar depois." } %>
     </div>
   <% end %>
-  
-  <div class="form-group">
-    <%= form.submit 'Enviar Respostas', class: 'btn btn-success' %>
-    <%= link_to 'Cancelar', respostas_path, class: 'btn btn-secondary' %>
-  </div>
-<% end %>
+</div>

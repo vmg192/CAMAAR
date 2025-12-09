@@ -9,9 +9,9 @@ Funcionalidade: Criação de Template de Formulário #102
     A fim de gerar formulários de avaliações para avaliar o desempenho das turmas
 
     Contexto:
-        Dado que um 'administrador' está logado
+        Dado que um "administrador" está logado
         E está na tela de 'Criação de Template'
-        E o banco de dados está 'carregado'
+        E o banco de dados está "carregado"
 
     @102.1
     Cenário: 102.1 - Quando um administrador preenche os dados e adiciona questões, deve salvar o novo template.

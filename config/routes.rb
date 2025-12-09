@@ -7,6 +7,23 @@ Rails.application.routes.draw do
     member do
       get :resultados
     end
+    # Rotas para alunos responderem avaliações (Feature 99)
+    resources :respostas, only: [:new, :create]
+  end
+
+  # --- ROTAS DE IMPORTAÇÃO SIGAA ---
+  resources :sigaa_imports, only: [:new, :create] do
+    collection do
+      post :update  # For update/sync operations
+      get :success  # For showing import results
+    end
+  end
+
+  # --- ROTAS DE GERENCIAMENTO DE MODELOS ---
+  resources :modelos do
+    member do
+      post :clone
+    end
   end
 
   resource :session

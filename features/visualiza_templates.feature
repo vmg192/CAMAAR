@@ -10,9 +10,9 @@ Funcionalidade: Visualização dos templates criados #111
     A fim de poder editar e/ou deletar um template que eu criei
 
     Contexto:
-        Dado que um 'administrador' está logado
+        Dado que um "administrador" está logado
         E está na tela 'Templates'
-        E o banco de dados está 'carregado'
+        E o banco de dados está "carregado"
 
     @111.1
     Cenário: 111.1 - Quando um administrador seleciona o botão de editar um template, deve ser possível visualizar e editar o template.
