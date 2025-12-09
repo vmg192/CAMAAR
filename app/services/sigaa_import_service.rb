@@ -7,8 +7,9 @@ class SigaaImportService
     @results = {
       turmas_created: 0,
       turmas_updated: 0,
-      usuarios_created: 0,
-      usuarios_updated: 0,
+      users_created: 0,
+      users_updated: 0,
+      new_users: [],  # Array de hashes com credenciais dos novos usuários
       errors: []
     }
   end
@@ -48,10 +49,42 @@ class SigaaImportService
   private
 
   def process_json
-    file_content = File.read(@file_path)
-    data = JSON.parse(file_content)
+    data = JSON.parse(File.read(@file_path))
+    
+    # class_members.json é um array de turmas
     data.each do |turma_data|
-      process_turma(turma_data)
+      # Mapeia campos do formato real para o esperado
+      normalized_data = {
+        'codigo' => turma_data['code'],
+        'nome' => turma_data['code'], # Usa o código como nome se não tiver
+        'semestre' => turma_data['semester'],
+        'participantes' => []
+      }
+      
+      # Processa dicentes (alunos)
+      if turma_data['dicente']
+        turma_data['dicente'].each do |dicente|
+          normalized_data['participantes'] << {
+            'nome' => dicente['nome'],
+            'email' => dicente['email'],
+            'matricula' => dicente['matricula'] || dicente['usuario'],
+            'papel' => 'Discente'
+          }
+        end
+      end
+      
+      # Processa docente (professor)
+      if turma_data['docente']
+        docente = turma_data['docente']
+        normalized_data['participantes'] << {
+          'nome' => docente['nome'],
+          'email' => docente['email'],
+          'matricula' => docente['usuario'],
+          'papel' => 'Docente'
+        }
+      end
+      
+      process_turma(normalized_data)
     end
   end
 
@@ -111,12 +144,15 @@ class SigaaImportService
   end
 
   def process_participante_single(turma, p_data)
-    # Usuario identificado pela matrícula
+    # User identificado pela matrícula
     user = User.find_or_initialize_by(matricula: p_data['matricula'])
     
     is_new_user = user.new_record?
     user.nome = p_data['nome']
-    user.email = p_data['email']
+    user.email_address = p_data['email']
+    
+    # Generate login from matricula if not present (assuming matricula is unique and good for login)
+    user.login = p_data['matricula'] if user.login.blank?
 
     generated_password = nil
     if is_new_user
@@ -126,10 +162,21 @@ class SigaaImportService
 
     if user.save
       if is_new_user
-        @results[:usuarios_created] += 1
-        UserMailer.cadastro_email(user, generated_password).deliver_now
+        @results[:users_created] += 1
+        
+        # Armazena credenciais do novo usuário para exibir depois
+        @results[:new_users] << {
+          matricula: user.matricula,
+          nome: user.nome,
+          login: user.login,
+          password: generated_password,
+          email: user.email_address
+        }
+        
+        # Envia email com senha para novo usuário (COMENTADO - muito lento)
+        # UserMailer.cadastro_email(user, generated_password).deliver_now
       else
-        @results[:usuarios_updated] += 1
+        @results[:users_updated] += 1
       end
       
       matricula = MatriculaTurma.find_or_initialize_by(turma: turma, user: user)

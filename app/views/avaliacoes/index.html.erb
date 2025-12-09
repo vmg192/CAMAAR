@@ -1,4 +1,61 @@
-<div>
-  <h1 class="font-bold text-4xl">Avaliacoes#index</h1>
-  <p>Find me in app/views/avaliacoes/index.html.erb</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Minhas Turmas</h1>
+    
+    <% if @turmas.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @turmas.each do |turma| %>
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-800">
+                  <%= turma.nome %>
+                </h2>
+                <p class="text-sm text-gray-600 mt-1">
+                  <%= turma.codigo %> - <%= turma.semestre %>
+                </p>
+              </div>
+              
+              <% avaliacao_pendente = turma.avaliacoes.where('data_fim IS NULL OR data_fim >= ?', Time.current)
+                                          .where.not(id: current_user.submissoes.select(:avaliacao_id))
+                                          .first %>
+              
+              <% if avaliacao_pendente %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Avaliação Pendente
+                </span>
+              <% end %>
+            </div>
+            
+            <% if avaliacao_pendente %>
+              <% prazo = avaliacao_pendente.data_fim %>
+              <p class="text-sm text-gray-600 mb-4">
+                <% if prazo %>
+                  Prazo: <%= prazo.strftime('%d/%m/%Y') %>
+                <% else %>
+                  Sem prazo definido
+                <% end %>
+              </p>
+              
+              <%= link_to "Responder Avaliação", 
+                  new_avaliacao_resposta_path(avaliacao_pendente), 
+                  class: "block w-full text-center bg-project-green text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors font-medium" %>
+            <% else %>
+              <p class="text-sm text-gray-500 italic">
+                Nenhuma avaliação pendente
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-lg shadow-md p-8 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhuma turma encontrada</h3>
+        <p class="mt-1 text-sm text-gray-500">Você ainda não está matriculado em nenhuma turma.</p>
+      </div>
+    <% end %>
+  </div>
 </div>

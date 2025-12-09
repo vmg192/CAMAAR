@@ -1,0 +1,25 @@
+Bem-vindo(a) ao CAMAAR, <%= @user.nome %>!
+
+Seu acesso ao sistema foi criado com sucesso.
+
+SUAS CREDENCIAIS DE ACESSO:
+================================
+Login: <%= @user.login %> (sua matrícula)
+Email: <%= @user.email_address %>
+Senha Temporária: <%= @senha %>
+================================
+
+Acesse o sistema em: <%= @login_url %>
+
+⚠️ IMPORTANTE:
+- Esta é uma senha temporária gerada automaticamente
+- Recomendamos que você altere sua senha no primeiro acesso
+- Não compartilhe suas credenciais com outras pessoas
+
+Se tiver qualquer dúvida, entre em contato com o suporte.
+
+Atenciosamente,
+Equipe CAMAAR
+--
+Este é um email automático, por favor não responda.
+© <%= Time.current.year %> CAMAAR - Universidade de Brasília

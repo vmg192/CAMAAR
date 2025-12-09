@@ -9,7 +9,8 @@ class CsvFormatterService
     CSV.generate(headers: true) do |csv|
       csv << headers
 
-      @avaliacao.respostas.includes(:aluno).group_by(&:aluno).each do |aluno, respostas|
+      @avaliacao.submissoes.includes(:aluno, :respostas).each do |submissao|
+        aluno = submissao.aluno
         row = [aluno.matricula, aluno.nome]
         
         # Organiza as respostas pela ordem das questões se possível, ou mapeamento simples
@@ -18,7 +19,7 @@ class CsvFormatterService
         # Para este MVP, vamos apenas despejar o conteúdo na ordem das questões encontradas
         # Uma solução mais robusta ordenaria por ID da questão ou número
         
-        respostas.each do |resposta|
+        submissao.respostas.each do |resposta|
           row << resposta.conteudo
         end
         

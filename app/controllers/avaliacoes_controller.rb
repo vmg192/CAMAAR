@@ -1,8 +1,20 @@
 class AvaliacoesController < ApplicationController
-  allow_unauthenticated_access only: %i[ index create gestao_envios ]
-
+  # Requer autenticação para todas as actions
+  
   def index
-    @avaliacoes = Avaliacao.all
+    # Se for admin, mostrar todas as avaliações
+    # Se for aluno, mostrar todas as turmas matriculadas
+    @turmas = []  # Inicializa como array vazio por padrão
+    
+    if current_user&.eh_admin?
+      @avaliacoes = Avaliacao.all
+    elsif current_user
+      # Alunos veem suas turmas matriculadas
+      @turmas = current_user.turmas.includes(:avaliacoes)
+    else
+      # Não logado - redireciona para login
+      redirect_to new_session_path
+    end
   end
 
   def gestao_envios
@@ -42,13 +54,11 @@ class AvaliacoesController < ApplicationController
   def resultados
     @avaliacao = Avaliacao.find(params[:id])
     # Pré-carrega dependências para evitar N+1.
-    # Nota: a associação 'respostas' existe no Modelo, mesmo que a tabela esteja pendente.
-    # Usamos array vazio como fallback por segurança se o BD falhar.
     begin
-      @respostas = @avaliacao.respostas.includes(:aluno)
+      @submissoes = @avaliacao.submissoes.includes(:aluno, :respostas)
     rescue ActiveRecord::StatementInvalid
-      @respostas = []
-      flash.now[:alert] = "A tabela de respostas ainda não está disponível."
+      @submissoes = []
+      flash.now[:alert] = "Erro ao carregar submissões."
     end
 
     respond_to do |format|

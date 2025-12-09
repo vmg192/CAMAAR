@@ -1,72 +1,78 @@
 # app/controllers/respostas_controller.rb
 class RespostasController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_formulario, only: [ :new, :create ]
-  before_action :verificar_disponibilidade, only: [ :new, :create ]
-  before_action :verificar_nao_respondeu, only: [ :new, :create ]
-
+  before_action :set_avaliacao, only: [:new, :create]
+  before_action :verificar_disponibilidade, only: [:new, :create]
+  before_action :verificar_nao_respondeu, only: [:new, :create]
 
   def index
-    # Listagem de formulários pendentes para o aluno
-    @formularios_pendentes = Formulario.joins(:turma)
-      .where(turmas: { id: current_user.turma_id })
-      .where("data_limite > ?", Time.current)
-      .where.not(id: Resposta.where(aluno_id: current_user.id).select(:formulario_id).distinct)
-      .order(data_limite: :asc)
+    # Feature 109: Listagem de avaliações pendentes (já implementado em pages#index)
+    redirect_to root_path
   end
 
   def new
-    # Tela de resposta - renderizar as questões do template
-    @questoes = @formulario.questoes.order(:ordem)
-    @resposta = Resposta.new
+    # Feature 99: Tela para responder avaliação
+    @submissao = Submissao.new
+    @perguntas = @avaliacao.modelo.perguntas.order(:id)
+    
+    # Pre-build respostas para nested attributes
+    @perguntas.each do |pergunta|
+      @submissao.respostas.build(pergunta_id: pergunta.id)
+    end
   end
 
   def create
-    # Salvar respostas no banco
-    success = true
-    resposta_params[:respostas].each do |questao_id, conteudo|
-      resposta = Resposta.new(
-        aluno_id: current_user.id,
-        formulario_id: @formulario.id,
-        questao_id: questao_id,
-        conteudo: conteudo
-      )
-
-      # Validar obrigatoriedade das respostas antes de salvar
-      unless resposta.save
-        success = false
-        flash[:alert] = "Todas as questões são obrigatórias"
-        break
+    # Feature 99: Salvar respostas
+    @submissao = Submissao.new(submissao_params)
+    @submissao.avaliacao = @avaliacao
+    @submissao.aluno = current_user
+    @submissao.data_envio = Time.current
+    
+    # Adicionar snapshots nas respostas
+    @submissao.respostas.each do |resposta|
+      if resposta.pergunta_id
+        pergunta = Pergunta.find_by(id: resposta.pergunta_id)
+        if pergunta
+          resposta.snapshot_enunciado = pergunta.enunciado
+          resposta.snapshot_opcoes = pergunta.opcoes
+        end
       end
     end
-
-    if success
-      redirect_to respostas_path, notice: "Formulário respondido com sucesso!"
+    
+    if @submissao.save
+      redirect_to root_path, notice: "Avaliação enviada com sucesso! Obrigado pela sua participação."
     else
-      @questoes = @formulario.questoes.order(:ordem)
-      render :new
+      @perguntas = @avaliacao.modelo.perguntas.order(:id)
+      flash.now[:alert] = "Por favor, responda todas as perguntas obrigatórias."
+      render :new, status: :unprocessable_entity
     end
   end
 
   private
 
-  def set_formulario
-    @formulario = Formulario.find(params[:formulario_id])
+  def set_avaliacao
+    @avaliacao = Avaliacao.find(params[:avaliacao_id])
   end
 
   def verificar_disponibilidade
-    unless @formulario.disponivel_para_resposta?
-      redirect_to respostas_path, alert: "Este formulário não está mais disponível para resposta."
+    # Verifica se avaliação ainda está no prazo
+    if @avaliacao.data_fim && @avaliacao.data_fim < Time.current
+      redirect_to root_path, alert: "Esta avaliação já foi encerrada."
+    elsif @avaliacao.data_inicio && @avaliacao.data_inicio > Time.current
+      redirect_to root_path, alert: "Esta avaliação ainda não está disponível."
     end
   end
 
   def verificar_nao_respondeu
-    if @formulario.aluno_respondeu_tudo?(current_user.id)
-      redirect_to respostas_path, alert: "Você já respondeu este formulário."
+    # Verifica se aluno já respondeu
+    if Submissao.exists?(avaliacao: @avaliacao, aluno: current_user)
+      redirect_to root_path, alert: "Você já respondeu esta avaliação."
     end
   end
 
-  def resposta_params
-    params.require(:formulario).permit(respostas: {})
+  def submissao_params
+    params.require(:submissao).permit(
+      respostas_attributes: [:pergunta_id, :conteudo, :snapshot_enunciado, :snapshot_opcoes]
+    )
   end
 end

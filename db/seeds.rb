@@ -10,24 +10,46 @@ end
 puts "Usuário Admin garantido (ID: #{admin.id})"
 
 # Template Padrão
-modelo = Modelo.find_or_create_by!(titulo: 'Template Padrão') do |m|
-  m.ativo = true
-end
-puts "Modelo 'Template Padrão' garantido (ID: #{modelo.id})"
+# Garantir que exista pelo menos um modelo com perguntas
+puts "Modelo 'Template Padrão' garantido (ID: 1)"
+modelo = Modelo.find_or_initialize_by(id: 1)
+modelo.assign_attributes(
+  titulo: 'Template Padrão',
+  ativo: true
+)
 
-# Perguntas do Template Padrão
-perguntas_data = [
-  { enunciado: 'O professor demonstrou domínio do conteúdo?', tipo: 'escala', opcoes: { min: 1, max: 5 } },
-  { enunciado: 'O plano de ensino foi seguido?', tipo: 'escala', opcoes: { min: 1, max: 5 } },
-  { enunciado: 'Como você avalia a didática do professor?', tipo: 'escala', opcoes: { min: 1, max: 5 } },
-  { enunciado: 'Pontos positivos:', tipo: 'texto', opcoes: {} },
-  { enunciado: 'Pontos a melhorar:', tipo: 'texto', opcoes: {} }
-]
-
-perguntas_data.each do |p_data|
-  Pergunta.find_or_create_by!(modelo: modelo, enunciado: p_data[:enunciado]) do |p|
-    p.tipo = p_data[:tipo]
-    p.opcoes = p_data[:opcoes]
-  end
+# Criar perguntas apenas se o modelo for novo ou não tiver perguntas
+if modelo.new_record? || modelo.perguntas.empty?
+  modelo.perguntas.destroy_all if modelo.persisted? # Limpar perguntas antigas se existir
+  
+  modelo.perguntas.build([
+    {
+      enunciado: 'O professor demonstrou domínio do conteúdo?',
+      tipo: 'escala',
+      opcoes: { min: 1, max: 5 }
+    },
+    {
+      enunciado: 'As aulas foram bem organizadas?',
+      tipo: 'escala',
+      opcoes: { min: 1, max: 5 }
+    },
+    {
+      enunciado: 'O material didático foi adequado?',
+      tipo: 'escala',
+      opcoes: { min: 1, max: 5 }
+    },
+    {
+      enunciado: 'Você recomendaria esta disciplina?',
+      tipo: 'multipla_escolha',
+      opcoes: ['Sim', 'Não', 'Talvez']
+    },
+    {
+      enunciado: 'Comentários adicionais (opcional):',
+      tipo: 'texto_longo',
+      opcoes: nil
+    }
+  ])
 end
+
+modelo.save!
 puts "#{modelo.perguntas.count} perguntas garantidas para o Template Padrão."

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+    .credentials { background: white; padding: 20px; border-left: 4px solid #667eea; margin: 20px 0; }
+    .code { font-family: monospace; font-size: 18px; font-weight: bold; color: #667eea; background: #f0f0f0; padding: 10px; border-radius: 4px; display: inline-block; }
+    .button { display: inline-block; background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+    .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }
+    .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎓 Bem-vindo(a) ao CAMAAR!</h1>
+    </div>
+    
+    <div class="content">
+      <p>Olá, <strong><%= @user.nome %></strong>!</p>
+      
+      <p>Seu acesso ao sistema CAMAAR (Sistema de Avaliação Acadêmica) foi criado com sucesso.</p>
+      
+      <div class="credentials">
+        <h3>📋 Suas Credenciais de Acesso:</h3>
+        <p><strong>Login:</strong> <%= @user.login %> (sua matrícula)</p>
+        <p><strong>Email:</strong> <%= @user.email_address %></p>
+        <p><strong>Senha Temporária:</strong> <span class="code"><%= @senha %></span></p>
+      </div>
+      
+      <div style="text-align: center;">
+        <a href="<%= @login_url %>" class="button">🔐 Acessar o Sistema</a>
+      </div>
+      
+      <div class="warning">
+        <strong>⚠️ IMPORTANTE:</strong>
+        <ul>
+          <li>Esta é uma senha temporária gerada automaticamente</li>
+          <li>Recomendamos que você altere sua senha no primeiro acesso</li>
+          <li>Não compartilhe suas credenciais com outras pessoas</li>
+          <li>Este email contém informações sensíveis - mantenha-o seguro</li>
+        </ul>
+      </div>
+      
+      <p>Se você tiver qualquer dúvida ou problema para acessar o sistema, entre em contato com o suporte.</p>
+      
+      <p>Atenciosamente,<br>
+      <strong>Equipe CAMAAR</strong></p>
+    </div>
+    
+    <div class="footer">
+      <p>Este é um email automático, por favor não responda.</p>
+      <p>&copy; <%= Time.current.year %> CAMAAR - Universidade de Brasília</p>
+    </div>
+  </div>
+</body>
+</html>

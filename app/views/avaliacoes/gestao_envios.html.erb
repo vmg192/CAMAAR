@@ -60,7 +60,10 @@
               
               <% if (ultima_avaliacao = turma.avaliacoes.last) %>
                 <div class="mt-2">
-                  <%= link_to "Ver Resultados (Última)", resultados_avaliacao_path(ultima_avaliacao), class: "text-blue-500 hover:text-blue-800 text-xs font-semibold" %>
+                  <a href="<%= resultados_avaliacao_path(ultima_avaliacao) %>" 
+                     class="text-blue-500 hover:text-blue-800 text-xs font-semibold">
+                    Ver Resultados (Última)
+                  </a>
                 </div>
               <% end %>
             </td>
