@@ -68,6 +68,8 @@ gem "tailwindcss-rails", "~> 4.4"
 
 gem "rspec-rails", "~> 8.0", groups: [:development, :test]
 
+gem 'simplecov', require: false, group: :test
+
 gem "csv", "~> 3.3"
 
 # Email preview in browser for development
