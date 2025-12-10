@@ -69,6 +69,7 @@ gem "tailwindcss-rails", "~> 4.4"
 gem "rspec-rails", "~> 8.0", groups: [:development, :test]
 
 gem 'simplecov', require: false, group: :test
+gem "rubycritic", require: false
 
 gem "csv", "~> 3.3"
 
