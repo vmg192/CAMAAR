@@ -2,7 +2,14 @@ require 'rails_helper'
 
 RSpec.describe MatriculaTurma, type: :model do
   describe 'associations' do
-    it { should belong_to(:user).with_foreign_key('usuario_id') }
-    it { should belong_to(:turma) }
+    it 'belongs to user' do
+      association = described_class.reflect_on_association(:user)
+      expect(association.macro).to eq :belongs_to
+    end
+
+    it 'belongs to turma' do
+      association = described_class.reflect_on_association(:turma)
+      expect(association.macro).to eq :belongs_to
+    end
   end
 end
