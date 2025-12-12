@@ -1,11 +1,11 @@
 class AvaliacoesController < ApplicationController
   # Requer autenticação para todas as actions
-  
+
   def index
     # Se for admin, mostrar todas as avaliações
     # Se for aluno, mostrar todas as turmas matriculadas
     @turmas = []  # Inicializa como array vazio por padrão
-    
+
     if current_user&.eh_admin?
       @avaliacoes = Avaliacao.all
     elsif current_user

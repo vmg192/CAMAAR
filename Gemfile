@@ -66,13 +66,12 @@ end
 
 gem "tailwindcss-rails", "~> 4.4"
 
-gem "rspec-rails", "~> 8.0", groups: [:development, :test]
+gem "rspec-rails", "~> 8.0", groups: [ :development, :test ]
 
-gem 'simplecov', require: false, group: :test
+gem "simplecov", require: false, group: :test
 gem "rubycritic", require: false
 
 gem "csv", "~> 3.3"
 
 # Email preview in browser for development
-gem 'letter_opener', group: :development
-
+gem "letter_opener", group: :development

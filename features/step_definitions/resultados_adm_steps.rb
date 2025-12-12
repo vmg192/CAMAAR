@@ -10,10 +10,10 @@ Então('o download do arquivo CSV deve iniciar') do
   # No Capybara, verificar download de CSV é complicado
   # Verificamos os headers da resposta ou que o link existe e está correto
   # Para o MVP, vamos testar o serviço diretamente
-  
+
   # Encontra uma avaliação para exportar
   avaliacao = Avaliacao.first
-  
+
   if avaliacao
     # Testa o serviço diretamente já que Capybara não testa downloads facilmente
     csv_content = CsvFormatterService.new(avaliacao).generate
@@ -38,7 +38,7 @@ Dado('que a avaliação selecionada não possui respostas') do
     data_inicio: Time.current,
     data_fim: 7.days.from_now
   )
-  
+
   # Garante que nenhuma submissão existe (mas não podemos tocar no model Submissao conforme pedido do usuário)
   # Apenas verifica que a avaliação existe
   expect(@avaliacao).to be_persisted

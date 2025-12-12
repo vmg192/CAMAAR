@@ -43,7 +43,7 @@ When('tento criar uma avaliação sem preencher os campos obrigatórios') do
   row = find("tr", text: @turma.codigo)
   within(row) do
     # Esvaziar o campo de data pode acionar validação do navegador ou erro no backend
-    fill_in "data_fim", with: "" 
+    fill_in "data_fim", with: ""
     click_button "Gerar Avaliação"
   end
 end
