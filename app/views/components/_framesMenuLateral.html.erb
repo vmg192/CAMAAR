@@ -1,0 +1,25 @@
+<% 
+   gerenciamento_controllers = ['sigaa_imports', 'modelos', 'dashboard', 'home']
+   avaliacoes_controllers = ['avaliacoes', 'respostas']
+   actions_gerenciamento_em_avaliacoes = ['gestao_envios', 'resultados'] 
+
+   is_gerenciamento_active = controller_name.in?(gerenciamento_controllers) || 
+                             (controller_name.in?(avaliacoes_controllers) && action_name.in?(actions_gerenciamento_em_avaliacoes))
+
+   is_avaliacoes_active = (controller_name.in?(avaliacoes_controllers) && !action_name.in?(actions_gerenciamento_em_avaliacoes))
+%>
+
+<%= link_to "Avaliações", avaliacoes_path, 
+    class: menu_button_classes(avaliacoes_path, active_condition: is_avaliacoes_active) %>
+
+<% if Current.session&.user&.eh_admin? %>
+    <%= link_to "Gerenciamento", root_path, 
+    class: menu_button_classes(root_path, active_condition: is_gerenciamento_active) %>
+<% end %>
+
+
+
+
+
+
+
