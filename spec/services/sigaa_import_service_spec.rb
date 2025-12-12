@@ -32,7 +32,7 @@ RSpec.describe SigaaImportService, type: :service do
 
     allow(CSV).to receive(:foreach).with(csv_path, headers: true, col_sep: ',').and_yield(
       CSV::Row.new(%w[codigo_turma nome_turma semestre nome_usuario email matricula papel],
-                   ['T02', 'Banco de Dados', '2024.1', 'Maria Souza', 'maria@example.com', '654321', 'professor'])
+                   [ 'T02', 'Banco de Dados', '2024.1', 'Maria Souza', 'maria@example.com', '654321', 'professor' ])
     )
 
     allow(File).to receive(:extname).and_call_original

@@ -11,15 +11,15 @@ module EmailHelpers
   def last_email
     ActionMailer::Base.deliveries.last
   end
-  
+
   def all_emails
     ActionMailer::Base.deliveries
   end
-  
+
   def reset_emails
     ActionMailer::Base.deliveries.clear
   end
-  
+
   def emails_sent_to(email_address)
     ActionMailer::Base.deliveries.select { |email| email.to.include?(email_address) }
   end

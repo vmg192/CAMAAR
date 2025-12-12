@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   # --- ROTAS DE AVALIACOES ---
-  resources :avaliacoes, only: [:index, :create] do
+  resources :avaliacoes, only: [ :index, :create ] do
     collection do
       get :gestao_envios
     end
@@ -8,11 +8,11 @@ Rails.application.routes.draw do
       get :resultados
     end
     # Rotas para alunos responderem avaliações (Feature 99)
-    resources :respostas, only: [:new, :create]
+    resources :respostas, only: [ :new, :create ]
   end
 
   # --- ROTAS DE IMPORTAÇÃO SIGAA ---
-  resources :sigaa_imports, only: [:new, :create] do
+  resources :sigaa_imports, only: [ :new, :create ] do
     collection do
       post :update  # For update/sync operations
       get :success  # For showing import results

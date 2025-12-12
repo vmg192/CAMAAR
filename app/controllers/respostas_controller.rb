@@ -1,9 +1,9 @@
 # app/controllers/respostas_controller.rb
 class RespostasController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_avaliacao, only: [:new, :create]
-  before_action :verificar_disponibilidade, only: [:new, :create]
-  before_action :verificar_nao_respondeu, only: [:new, :create]
+  before_action :set_avaliacao, only: [ :new, :create ]
+  before_action :verificar_disponibilidade, only: [ :new, :create ]
+  before_action :verificar_nao_respondeu, only: [ :new, :create ]
 
   def index
     # Feature 109: Listagem de avaliações pendentes (já implementado em pages#index)
@@ -14,7 +14,7 @@ class RespostasController < ApplicationController
     # Feature 99: Tela para responder avaliação
     @submissao = Submissao.new
     @perguntas = @avaliacao.modelo.perguntas.order(:id)
-    
+
     # Pre-build respostas para nested attributes
     @perguntas.each do |pergunta|
       @submissao.respostas.build(pergunta_id: pergunta.id)
@@ -27,7 +27,7 @@ class RespostasController < ApplicationController
     @submissao.avaliacao = @avaliacao
     @submissao.aluno = current_user
     @submissao.data_envio = Time.current
-    
+
     # Adicionar snapshots nas respostas
     @submissao.respostas.each do |resposta|
       if resposta.pergunta_id
@@ -38,7 +38,7 @@ class RespostasController < ApplicationController
         end
       end
     end
-    
+
     if @submissao.save
       redirect_to root_path, notice: "Avaliação enviada com sucesso! Obrigado pela sua participação."
     else
@@ -72,7 +72,7 @@ class RespostasController < ApplicationController
 
   def submissao_params
     params.require(:submissao).permit(
-      respostas_attributes: [:pergunta_id, :conteudo, :snapshot_enunciado, :snapshot_opcoes]
+      respostas_attributes: [ :pergunta_id, :conteudo, :snapshot_enunciado, :snapshot_opcoes ]
     )
   end
 end

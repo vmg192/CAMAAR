@@ -3,18 +3,18 @@ class UserMailer < ApplicationMailer
   def definicao_senha(user)
     @user = user
     @url  = "http://localhost:3000/definicao_senha"
-    mail(to: @user.email_address, subject: 'Definição de Senha - Sistema de Gestão')
+    mail(to: @user.email_address, subject: "Definição de Senha - Sistema de Gestão")
   end
-  
+
   # Email de cadastro com senha temporária (novo método)
   def cadastro_email(user, senha_temporaria)
     @user = user
     @senha = senha_temporaria
     @login_url = new_session_url
-    
+
     mail(
       to: @user.email_address,
-      subject: 'Bem-vindo(a) ao CAMAAR - Sua senha de acesso'
+      subject: "Bem-vindo(a) ao CAMAAR - Sua senha de acesso"
     )
   end
 end

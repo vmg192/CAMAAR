@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe UserMailer, type: :mailer do
   describe 'definicao_senha' do
-
     let(:user) do
       User.create(nome: 'Teste', email_address: 'teste@example.com', matricula: '111', password: 'password')
     end
@@ -12,7 +11,7 @@ RSpec.describe UserMailer, type: :mailer do
 
     it 'renders the headers' do
       expect(mail.subject).to eq('Definição de Senha - Sistema de Gestão')
-      expect(mail.to).to eq([user.email_address])
+      expect(mail.to).to eq([ user.email_address ])
     end
 
     it 'renders the body' do
@@ -29,7 +28,7 @@ RSpec.describe UserMailer, type: :mailer do
 
     it 'renders the headers' do
       expect(mail.subject).to eq('Bem-vindo(a) ao CAMAAR - Sua senha de acesso')
-      expect(mail.to).to eq([user.email_address])
+      expect(mail.to).to eq([ user.email_address ])
     end
 
     it 'renders the body with password' do

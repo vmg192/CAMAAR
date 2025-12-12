@@ -5,7 +5,7 @@ Given('que estou matriculado em turmas com avaliações ativas') do
   @student = User.find_by(email_address: "aluno@test.com")
   @turma = Turma.create!(codigo: "TRM_STU", nome: "Turma Student", semestre: "2024/1")
   MatriculaTurma.create!(user: @student, turma: @turma, papel: "aluno")
-  
+
   @modelo = Modelo.create!(titulo: "Template Student")
   @avaliacao = Avaliacao.create!(turma: @turma, modelo: @modelo, titulo: "Avaliação Student", data_inicio: Time.now, data_fim: Time.now + 1.week)
 end

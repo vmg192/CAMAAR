@@ -27,7 +27,7 @@ Quando('importo dados do SIGAA') do
 
   # Visita a página de importação
   visit new_sigaa_import_path
-  
+
   # Faz upload do arquivo
   attach_file('file', @temp_file_path)
   click_button 'Importar Dados'
@@ -70,7 +70,7 @@ end
 # Feature 100 - Cadastro de Usuários
 Quando('importo um arquivo de dados do SIGAA contendo novos usuários') do
   @initial_user_count = User.count
-  
+
   sample_data = [
     {
       "codigo" => "NEW001",
@@ -107,7 +107,7 @@ Então('um email de boas-vindas deve ser enviado para cada um') do
   new_user = User.find_by(matricula: "888888")
   expect(new_user).to be_present
   expect(new_user.password_digest).to be_present
-  
+
   # Verifica que email foi enviado
   expect(last_email).not_to be_nil, "Nenhum email foi enviado"
   expect(last_email.to).to include(new_user.email_address)

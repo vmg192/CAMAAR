@@ -1,5 +1,5 @@
-require 'json'
-require 'csv'
+require "json"
+require "csv"
 
 class SigaaImportService
   def initialize(file_path)
@@ -23,9 +23,9 @@ class SigaaImportService
     begin
       ActiveRecord::Base.transaction do
         case File.extname(@file_path).downcase
-        when '.json'
+        when ".json"
           process_json
-        when '.csv'
+        when ".csv"
           process_csv
         else
           @results[:errors] << "Formato de arquivo não suportado: #{File.extname(@file_path)}"
@@ -50,61 +50,61 @@ class SigaaImportService
 
   def process_json
     data = JSON.parse(File.read(@file_path))
-    
+
     # class_members.json é um array de turmas
     data.each do |turma_data|
       # Mapeia campos do formato real para o esperado
       normalized_data = {
-        'codigo' => turma_data['code'],
-        'nome' => turma_data['code'], # Usa o código como nome se não tiver
-        'semestre' => turma_data['semester'],
-        'participantes' => []
+        "codigo" => turma_data["code"],
+        "nome" => turma_data["code"], # Usa o código como nome se não tiver
+        "semestre" => turma_data["semester"],
+        "participantes" => []
       }
-      
+
       # Processa dicentes (alunos)
-      if turma_data['dicente']
-        turma_data['dicente'].each do |dicente|
-          normalized_data['participantes'] << {
-            'nome' => dicente['nome'],
-            'email' => dicente['email'],
-            'matricula' => dicente['matricula'] || dicente['usuario'],
-            'papel' => 'Discente'
+      if turma_data["dicente"]
+        turma_data["dicente"].each do |dicente|
+          normalized_data["participantes"] << {
+            "nome" => dicente["nome"],
+            "email" => dicente["email"],
+            "matricula" => dicente["matricula"] || dicente["usuario"],
+            "papel" => "Discente"
           }
         end
       end
-      
+
       # Processa docente (professor)
-      if turma_data['docente']
-        docente = turma_data['docente']
-        normalized_data['participantes'] << {
-          'nome' => docente['nome'],
-          'email' => docente['email'],
-          'matricula' => docente['usuario'],
-          'papel' => 'Docente'
+      if turma_data["docente"]
+        docente = turma_data["docente"]
+        normalized_data["participantes"] << {
+          "nome" => docente["nome"],
+          "email" => docente["email"],
+          "matricula" => docente["usuario"],
+          "papel" => "Docente"
         }
       end
-      
+
       process_turma(normalized_data)
     end
   end
 
   def process_csv
-    CSV.foreach(@file_path, headers: true, col_sep: ',') do |row|
+    CSV.foreach(@file_path, headers: true, col_sep: ",") do |row|
       # Assumindo estrutura do CSV
       turma_data = {
-        'codigo' => row['codigo_turma'],
-        'nome' => row['nome_turma'],
-        'semestre' => row['semestre']
+        "codigo" => row["codigo_turma"],
+        "nome" => row["nome_turma"],
+        "semestre" => row["semestre"]
       }
-      
+
       turma = process_turma_record(turma_data)
-      
+
       if turma&.persisted?
         user_data = {
-          'nome' => row['nome_usuario'],
-          'email' => row['email'],
-          'matricula' => row['matricula'],
-          'papel' => row['papel']
+          "nome" => row["nome_usuario"],
+          "email" => row["email"],
+          "matricula" => row["matricula"],
+          "papel" => row["papel"]
         }
         process_participante_single(turma, user_data)
       end
@@ -114,16 +114,16 @@ class SigaaImportService
   def process_turma(data)
     turma = process_turma_record(data)
     if turma&.persisted?
-      process_participantes(turma, data['participantes']) if data['participantes']
+      process_participantes(turma, data["participantes"]) if data["participantes"]
     end
   end
 
   def process_turma_record(data)
-    turma = Turma.find_or_initialize_by(codigo: data['codigo'], semestre: data['semestre'])
-    
+    turma = Turma.find_or_initialize_by(codigo: data["codigo"], semestre: data["semestre"])
+
     is_new_record = turma.new_record?
-    turma.nome = data['nome']
-    
+    turma.nome = data["nome"]
+
     if turma.save
       if is_new_record
         @results[:turmas_created] += 1
@@ -145,14 +145,14 @@ class SigaaImportService
 
   def process_participante_single(turma, p_data)
     # User identificado pela matrícula
-    user = User.find_or_initialize_by(matricula: p_data['matricula'])
-    
+    user = User.find_or_initialize_by(matricula: p_data["matricula"])
+
     is_new_user = user.new_record?
-    user.nome = p_data['nome']
-    user.email_address = p_data['email']
-    
+    user.nome = p_data["nome"]
+    user.email_address = p_data["email"]
+
     # Generate login from matricula if not present (assuming matricula is unique and good for login)
-    user.login = p_data['matricula'] if user.login.blank?
+    user.login = p_data["matricula"] if user.login.blank?
 
     generated_password = nil
     if is_new_user
@@ -163,7 +163,7 @@ class SigaaImportService
     if user.save
       if is_new_user
         @results[:users_created] += 1
-        
+
         # Armazena credenciais do novo usuário para exibir depois
         @results[:new_users] << {
           matricula: user.matricula,
@@ -172,15 +172,15 @@ class SigaaImportService
           password: generated_password,
           email: user.email_address
         }
-        
+
         # Envia email com senha para novo usuário (COMENTADO - muito lento)
         # UserMailer.cadastro_email(user, generated_password).deliver_now
       else
         @results[:users_updated] += 1
       end
-      
+
       matricula = MatriculaTurma.find_or_initialize_by(turma: turma, user: user)
-      matricula.papel = p_data['papel']
+      matricula.papel = p_data["papel"]
       matricula.save!
     else
       @results[:errors] << "Erro ao salvar usuário #{p_data['matricula']}: #{user.errors.full_messages.join(', ')}"
