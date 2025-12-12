@@ -17,7 +17,7 @@
 
     <!-- Tab / Page Title -->
     <h1 class="font-roboto text-xl font-normal text-gray-900 truncate">
-      Avaliações
+      <%= content_for?(:page_title) ? yield(:page_title) : "" %>
     </h1>
   </div>
 
