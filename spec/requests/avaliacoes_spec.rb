@@ -28,7 +28,7 @@ RSpec.describe "Avaliações", type: :request do
       it "aceita uma data_fim personalizada" do
         data_personalizada = 2.weeks.from_now.to_date
         post avaliacoes_path, params: { turma_id: turma.id, data_fim: data_personalizada }
-        
+
         avaliacao = Avaliacao.last
         expect(avaliacao.data_fim.to_date).to eq(data_personalizada)
       end

@@ -21,7 +21,7 @@ modelo.assign_attributes(
 # Criar perguntas apenas se o modelo for novo ou não tiver perguntas
 if modelo.new_record? || modelo.perguntas.empty?
   modelo.perguntas.destroy_all if modelo.persisted? # Limpar perguntas antigas se existir
-  
+
   modelo.perguntas.build([
     {
       enunciado: 'O professor demonstrou domínio do conteúdo?',
@@ -41,7 +41,7 @@ if modelo.new_record? || modelo.perguntas.empty?
     {
       enunciado: 'Você recomendaria esta disciplina?',
       tipo: 'multipla_escolha',
-      opcoes: ['Sim', 'Não', 'Talvez']
+      opcoes: [ 'Sim', 'Não', 'Talvez' ]
     },
     {
       enunciado: 'Comentários adicionais (opcional):',
