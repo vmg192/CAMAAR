@@ -1,8 +1,8 @@
-# require "test_helper"
+# require 'test_helper'
 
 # class SigaaImportServiceTest < ActiveSupport::TestCase
 #   def setup
-#     @file_path = Rails.root.join("tmp", "sigaa_data.json")
+#     @file_path = Rails.root.join('tmp', 'sigaa_data.json')
 #     @data = [
 #       {
 #         "codigo" => "TURMA123",
@@ -26,7 +26,7 @@
 #   end
 
 #   test "importa turmas e usuarios com sucesso" do
-#     assert_difference "ActionMailer::Base.deliveries.size", 1 do
+#     assert_difference 'ActionMailer::Base.deliveries.size', 1 do
 #       service = SigaaImportService.new(@file_path)
 #       result = service.process
 
