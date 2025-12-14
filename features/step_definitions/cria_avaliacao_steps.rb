@@ -1,15 +1,27 @@
 # features/step_definitions/cria_avaliacao_steps.rb
 
 Given('que existem turmas cadastradas') do
-  @turma = Turma.create!(
-    codigo: "CIC001",
-    nome: "Engenharia de Software",
-    semestre: "2024.2"
-  )
+  # Usa código único para evitar conflitos
+  unique_code = "CIC#{Time.now.to_i % 10000}"
+  @turma = Turma.find_or_create_by!(codigo: unique_code) do |t|
+    t.nome = "Engenharia de Software"
+    t.semestre = "2024.2"
+  end
 end
 
 Given('que existe um modelo de avaliação padrão') do
-  Modelo.find_or_create_by!(titulo: "Template Padrão", ativo: true)
+  # Primeiro cria/encontra o modelo
+  @modelo = Modelo.find_by(titulo: "Template Padrão")
+
+  if @modelo.nil?
+    # Cria com uma pergunta inicial para satisfazer validação
+    @modelo = Modelo.new(titulo: "Template Padrão", ativo: true)
+    @modelo.perguntas.build(enunciado: "Avalie o desempenho geral", tipo: "escala")
+    @modelo.save!
+  elsif @modelo.perguntas.empty?
+    # Modelo existe mas não tem perguntas - adiciona
+    @modelo.perguntas.create!(enunciado: "Avalie o desempenho geral", tipo: "escala")
+  end
 end
 
 When('seleciono uma turma') do

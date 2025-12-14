@@ -10,8 +10,8 @@ class CsvFormatterService
       csv << headers
 
       @avaliacao.submissoes.includes(:aluno, :respostas).each do |submissao|
-        aluno = submissao.aluno
-        row = [ aluno.matricula, aluno.nome ]
+        # Usar ID anônimo em vez do nome/matrícula do aluno para privacidade
+        row = [ submissao.id ]
 
         # Organiza as respostas pela ordem das questões se possível, ou mapeamento simples
         # Assumindo que queremos mapear questões para colunas
@@ -31,8 +31,8 @@ class CsvFormatterService
   private
 
   def headers
-    # Cabeçalhos estáticos para informações do Aluno
-    base_headers = [ "Matrícula", "Nome" ]
+    # Cabeçalho anônimo (sem identificação do aluno para privacidade)
+    base_headers = [ "Submissão" ]
 
     # Cabeçalhos dinâmicos para questões
     # Identificando questões únicas respondidas ou todas as questões do modelo
