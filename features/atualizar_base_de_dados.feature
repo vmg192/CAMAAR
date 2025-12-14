@@ -21,7 +21,8 @@ Funcionalidade: Atualizar base de dados com SIGAA #108
         E devo ver um resumo das alterações realizadas
 
     @108.2
-    Cenário: 108.2 - Quando um administrador tenta atualizar a base de dados com o SIGAA, mas os dados fornecidos forem inválidos, então deve mostrar mensagem de erro
-        Quando faço upload de um arquivo inválido para atualização
-        Então os dados não devem ser alterados
-        E devo ver uma mensagem de erro de formato
+    Cenário: 108.2 - Quando um administrador atualiza a base mas os dados já estão atualizados, deve ver mensagem informativa
+        Dado que os dados do SIGAA já foram importados anteriormente
+        Quando faço upload de um arquivo CSV do SIGAA com dados atualizados
+        E confirmo a operação
+        Então devo ver uma mensagem indicando que os dados já estão atualizados

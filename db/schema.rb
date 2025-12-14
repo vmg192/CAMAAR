@@ -105,11 +105,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_190239) do
     t.index ["matricula"], name: "index_users_on_matricula", unique: true
   end
 
-  add_foreign_key "avaliacoes", "modelos"
-  add_foreign_key "avaliacoes", "turmas"
-  add_foreign_key "avaliacoes", "users", column: "professor_alvo_id"
-  add_foreign_key "matricula_turmas", "turmas"
-  add_foreign_key "matricula_turmas", "users"
   add_foreign_key "perguntas", "modelos"
   add_foreign_key "respostas", "perguntas", column: "questao_id"
   add_foreign_key "respostas", "submissoes", column: "submissao_id"

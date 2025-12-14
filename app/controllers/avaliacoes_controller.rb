@@ -56,8 +56,12 @@ class AvaliacoesController < ApplicationController
     # Pré-carrega dependências para evitar N+1.
     begin
       @submissoes = @avaliacao.submissoes.includes(:aluno, :respostas)
+      @perguntas = @avaliacao.modelo.perguntas.order(:id)
+      @question_stats = build_question_statistics(@avaliacao)
     rescue ActiveRecord::StatementInvalid
       @submissoes = []
+      @perguntas = []
+      @question_stats = {}
       flash.now[:alert] = "Erro ao carregar submissões."
     end
 
@@ -66,6 +70,35 @@ class AvaliacoesController < ApplicationController
       format.csv do
         send_data CsvFormatterService.new(@avaliacao).generate,
                   filename: "resultados-avaliacao-#{@avaliacao.id}-#{Date.today}.csv"
+      end
+    end
+  end
+
+  private
+
+  def build_question_statistics(avaliacao)
+    avaliacao.modelo.perguntas.each_with_object({}) do |pergunta, stats|
+      respostas = Resposta.joins(:submissao)
+                          .where(submissoes: { avaliacao_id: avaliacao.id })
+                          .where(questao_id: pergunta.id)
+
+      if [ "multipla_escolha", "checkbox", "escala" ].include?(pergunta.tipo)
+        # Conta cada opção escolhida
+        stats[pergunta.id] = {
+          type: pergunta.tipo,
+          data: respostas.group(:conteudo).count,
+          total: respostas.count,
+          responses: []
+        }
+      else
+        # Para texto, inclui as respostas para exibição
+        text_responses = respostas.pluck(:conteudo).compact.reject(&:blank?)
+        stats[pergunta.id] = {
+          type: pergunta.tipo,
+          data: {},
+          total: respostas.count,
+          responses: text_responses
+        }
       end
     end
   end

@@ -1,4 +1,5 @@
 # language: pt
+@wip
 #1 ponto
 Funcionalidade: Sistema de definição de senha #105
     Eu como Usuário

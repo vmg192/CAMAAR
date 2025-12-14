@@ -2,10 +2,10 @@
 # Script para resetar o banco de dados do CAMAAR
 
 echo " Removendo bancos antigos..."
-rm -f db/*.sqlite3
+rm -f storage/*.sqlite3
 
-echo " Criando banco com schema correto..."
-rails db:schema:load
+echo " Criando banco..."
+rails db:create db:migrate
 
 echo " Populando dados..."
 rails db:seed

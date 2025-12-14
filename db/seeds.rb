@@ -9,9 +9,30 @@ admin = User.find_or_create_by!(login: 'admin') do |u|
 end
 puts "Usuário Admin garantido (ID: #{admin.id})"
 
+# Aluno de teste
+aluno = User.find_or_create_by!(login: 'aluno123') do |u|
+  u.email_address = 'aluno123@aluno.unb.br'
+  u.nome = 'Aluno Teste'
+  u.matricula = '123456789'
+  u.password = 'senha123'
+  u.password_confirmation = 'senha123'
+  u.eh_admin = false
+end
+puts "Usuário Aluno garantido (ID: #{aluno.id})"
+
+# Professor de teste
+prof = User.find_or_create_by!(login: 'prof') do |u|
+  u.email_address = 'prof@unb.br'
+  u.nome = 'Professor Teste'
+  u.matricula = '987654321'
+  u.password = 'senha123'
+  u.password_confirmation = 'senha123'
+  u.eh_admin = false
+end
+puts "Usuário Professor garantido (ID: #{prof.id})"
+
 # Template Padrão
 # Garantir que exista pelo menos um modelo com perguntas
-puts "Modelo 'Template Padrão' garantido (ID: 1)"
 modelo = Modelo.find_or_initialize_by(id: 1)
 modelo.assign_attributes(
   titulo: 'Template Padrão',
@@ -52,4 +73,5 @@ if modelo.new_record? || modelo.perguntas.empty?
 end
 
 modelo.save!
+puts "Modelo 'Template Padrão' garantido (ID: #{modelo.id})"
 puts "#{modelo.perguntas.count} perguntas garantidas para o Template Padrão."

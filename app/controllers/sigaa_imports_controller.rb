@@ -9,14 +9,15 @@ class SigaaImportsController < ApplicationController
   def create
     # Usa automaticamente o arquivo class_members.json do projeto
     file_path = Rails.root.join("class_members.json")
+    classes_file_path = Rails.root.join("classes.json")
 
     unless File.exist?(file_path)
       redirect_to new_sigaa_import_path, alert: "Arquivo class_members.json não encontrado no projeto."
       return
     end
 
-    # Processa a importação
-    service = SigaaImportService.new(file_path)
+    # Processa a importação (passa classes.json se existir)
+    service = SigaaImportService.new(file_path, classes_file_path)
     @results = service.process
 
     if @results[:errors].any?
@@ -34,13 +35,14 @@ class SigaaImportsController < ApplicationController
   def update
     # Usa automaticamente o arquivo class_members.json do projeto (atualização)
     file_path = Rails.root.join("class_members.json")
+    classes_file_path = Rails.root.join("classes.json")
 
     unless File.exist?(file_path)
       redirect_to new_sigaa_import_path, alert: "Arquivo class_members.json não encontrado no projeto."
       return
     end
 
-    service = SigaaImportService.new(file_path)
+    service = SigaaImportService.new(file_path, classes_file_path)
     @results = service.process
 
     if @results[:errors].any?

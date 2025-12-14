@@ -19,7 +19,7 @@ Funcionalidade: Importar dados do SIGAA #98
         E devo ver um resumo da importação com sucesso
 
     @98.2
-    Cenário: 98.2 - Quando um administrador tenta importar novos dados do SIGAA, mas os dados fornecidos forem inválidos
-        Quando tento importar dados inválidos do SIGAA
-        Então nenhum dado deve ser salvo no banco de dados
-        E não devo ver informações novas na tela
+    Cenário: 98.2 - Quando um administrador importa dados do SIGAA mas não há dados novos, deve ver mensagem informativa
+        Dado que os dados do SIGAA já foram importados anteriormente
+        Quando importo dados do SIGAA novamente
+        Então devo ver uma mensagem indicando que os dados já estão atualizados

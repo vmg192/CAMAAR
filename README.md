@@ -39,6 +39,10 @@ Acesse: http://localhost:3000
 ## Testes
 
 ```bash
-# Rodar testes BDD
+# Rodar todos os testes BDD (25 cenários, 133 steps)
+bundle exec cucumber --tags "not @wip"
+
+# Rodar feature específica
 bundle exec cucumber features/sistema_login.feature
 ```
+

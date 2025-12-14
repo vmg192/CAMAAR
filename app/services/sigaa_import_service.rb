@@ -2,8 +2,9 @@ require "json"
 require "csv"
 
 class SigaaImportService
-  def initialize(file_path)
+  def initialize(file_path, classes_file_path = nil)
     @file_path = file_path
+    @classes_file_path = classes_file_path
     @results = {
       turmas_created: 0,
       turmas_updated: 0,
@@ -50,13 +51,18 @@ class SigaaImportService
 
   def process_json
     data = JSON.parse(File.read(@file_path))
+    classes_lookup = build_classes_lookup
 
     # class_members.json é um array de turmas
     data.each do |turma_data|
+      # Busca o nome real da turma em classes.json
+      class_key = [ turma_data["code"], turma_data["semester"] ]
+      class_name = classes_lookup[class_key] || turma_data["code"]
+
       # Mapeia campos do formato real para o esperado
       normalized_data = {
         "codigo" => turma_data["code"],
-        "nome" => turma_data["code"], # Usa o código como nome se não tiver
+        "nome" => class_name,
         "semestre" => turma_data["semester"],
         "participantes" => []
       }
@@ -85,6 +91,23 @@ class SigaaImportService
       end
 
       process_turma(normalized_data)
+    end
+  end
+
+  # Constrói um hash de lookup para nomes de turmas a partir de classes.json
+  def build_classes_lookup
+    return {} unless @classes_file_path && File.exist?(@classes_file_path)
+
+    begin
+      classes_data = JSON.parse(File.read(@classes_file_path))
+      classes_data.each_with_object({}) do |item, hash|
+        # Usa code + semester como chave composta
+        key = [ item["code"], item.dig("class", "semester") ]
+        hash[key] = item["name"]
+      end
+    rescue JSON::ParserError
+      @results[:errors] << "Arquivo classes.json inválido"
+      {}
     end
   end
 
