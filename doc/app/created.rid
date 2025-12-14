@@ -1,0 +1,13 @@
+Sun, 14 Dec 2025 19:21:06 -0300
+app/models/MatriculaTurma.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/application_record.rb	Sun, 14 Dec 2025 17:34:18 -0300
+app/models/avaliacao.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/current.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/matricula_turma.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/modelo.rb	Sun, 14 Dec 2025 19:11:17 -0300
+app/models/pergunta.rb	Sun, 14 Dec 2025 19:12:02 -0300
+app/models/resposta.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/session.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/submissao.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/turma.rb	Sun, 14 Dec 2025 17:35:07 -0300
+app/models/user.rb	Sun, 14 Dec 2025 19:20:47 -0300

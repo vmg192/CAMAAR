@@ -1,6 +1,26 @@
 require 'rails_helper'
 
 RSpec.describe "Avaliações", type: :request do
+  # 1. Criação do Usuário para Autenticação
+  let(:password) { "senha_segura_123" }
+  let(:user) do
+    User.create!(
+      login: "avaliador_teste",
+      email_address: "avaliador@teste.com",
+      matricula: "999999",
+      nome: "Avaliador Teste",
+      formacao: "Docente",
+      password: password,
+      password_confirmation: password,
+      eh_admin: true
+    )
+  end
+
+  # 2. Login antes de cada teste
+  before do
+    post session_path, params: { email_address: user.email_address, password: password }
+  end
+
   describe "GET /gestao_envios" do
     it "retorna sucesso HTTP" do
       get gestao_envios_avaliacoes_path
@@ -10,7 +30,15 @@ RSpec.describe "Avaliações", type: :request do
 
   describe "POST /create" do
     let!(:turma) { Turma.create!(codigo: "CIC001", nome: "Turma de Teste", semestre: "2024.1") }
-    let!(:template) { Modelo.create!(titulo: "Template Padrão", ativo: true) }
+    
+    # 3. FIX: Criação do Modelo COM Pergunta (para não dar erro de validação)
+    let!(:template) do
+      mod = Modelo.new(titulo: "Template Padrão", ativo: true)
+      # Adiciona uma pergunta na memória antes de salvar
+      mod.perguntas.build(enunciado: "Pergunta Obrigatória", tipo: "texto_curto")
+      mod.save!
+      mod
+    end
 
     context "com entradas válidas" do
       it "cria uma nova Avaliação vinculada ao template padrão" do

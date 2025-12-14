@@ -542,6 +542,7 @@ DEPENDENCIES
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.4)
+  rdoc
   rspec-rails (~> 8.0)
   rubocop-rails-omakase
   rubycritic
