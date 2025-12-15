@@ -51,6 +51,8 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rdoc"
+
+  gem "rails-controller-testing"
 end
 
 group :development do
