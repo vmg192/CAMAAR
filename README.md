@@ -46,3 +46,12 @@ bundle exec cucumber --tags "not @wip"
 bundle exec cucumber features/sistema_login.feature
 ```
 
+## Documentação
+
+```bash
+# Gerar documentação RDoc
+rdoc app/controllers app/models app/services --output doc
+
+# Abrir no navegador
+firefox doc/index.html
+```

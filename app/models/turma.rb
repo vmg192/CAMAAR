@@ -1,3 +1,4 @@
+# Representa uma turma/disciplina do SIGAA
 class Turma < ApplicationRecord
   has_many :avaliacoes
   has_many :matricula_turmas

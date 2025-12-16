@@ -1,42 +1,50 @@
-# app/controllers/modelos_controller.rb
+# Gerencia templates de avaliação com perguntas
+# Acesso restrito a administradores
 class ModelosController < ApplicationController
   before_action :require_admin
   before_action :set_modelo, only: [ :show, :edit, :update, :destroy, :clone ]
 
-  # GET /modelos
+  # Lista todos os templates
+  # @return [void] Renderiza index com modelos
   def index
     @modelos = Modelo.includes(:perguntas).order(created_at: :desc)
   end
 
-  # GET /modelos/1
+  # Exibe detalhes do template
+  # @return [void] Renderiza view show
   def show
   end
 
-  # GET /modelos/new
+  # Formulário para novo template
+  # @return [void] Renderiza form com 3 perguntas em branco
   def new
     @modelo = Modelo.new
-    3.times { @modelo.perguntas.build } # Cria 3 perguntas em branco por padrão
+    3.times { @modelo.perguntas.build }
   end
 
-  # GET /modelos/1/edit
+  # Formulário para editar template
+  # @return [void] Renderiza form de edição
   def edit
     @modelo.perguntas.build if @modelo.perguntas.empty?
   end
 
-  # POST /modelos
+  # Cria novo template
+  # @return [void] Redireciona para show ou renderiza form com erros
+  # @efeito_colateral Cria registros Modelo e Pergunta
   def create
     @modelo = Modelo.new(modelo_params)
 
     if @modelo.save
       redirect_to @modelo, notice: "Modelo criado com sucesso."
     else
-      # Garante que tenha pelo menos uma pergunta para mostrar no formulário
       @modelo.perguntas.build if @modelo.perguntas.empty?
       render :new, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /modelos/1
+  # Atualiza template existente
+  # @return [void] Redireciona para show ou renderiza form com erros
+  # @efeito_colateral Atualiza registros Modelo e Pergunta
   def update
     if @modelo.update(modelo_params)
       redirect_to @modelo, notice: "Modelo atualizado com sucesso."
@@ -45,7 +53,9 @@ class ModelosController < ApplicationController
     end
   end
 
-  # DELETE /modelos/1
+  # Exclui template se não estiver em uso
+  # @return [void] Redireciona para index com mensagem
+  # @efeito_colateral Destrói registro Modelo se não em uso
   def destroy
     if @modelo.em_uso?
       redirect_to modelos_url, alert: "Não é possível excluir um modelo que está em uso."
@@ -55,7 +65,9 @@ class ModelosController < ApplicationController
     end
   end
 
-  # POST /modelos/1/clone
+  # Duplica template com todas as perguntas
+  # @return [void] Redireciona para editar template clonado
+  # @efeito_colateral Cria novo Modelo com Perguntas copiadas
   def clone
     novo_titulo = "#{@modelo.titulo} (Cópia)"
     novo_modelo = @modelo.clonar_com_perguntas(novo_titulo)
@@ -70,10 +82,14 @@ class ModelosController < ApplicationController
 
   private
 
+  # Encontra modelo por ID
+  # @return [Modelo]
   def set_modelo
     @modelo = Modelo.find(params[:id])
   end
 
+  # Parâmetros permitidos para modelo
+  # @return [ActionController::Parameters]
   def modelo_params
     params.require(:modelo).permit(
       :titulo,
@@ -88,6 +104,8 @@ class ModelosController < ApplicationController
     )
   end
 
+  # Verifica se usuário é admin
+  # @return [void] Redireciona não-admins
   def require_admin
     unless Current.session&.user&.eh_admin?
       redirect_to root_path, alert: "Acesso restrito a administradores."

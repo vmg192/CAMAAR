@@ -1,26 +1,29 @@
+# Gerencia avaliações de turmas
+# Listagem, criação e visualização de resultados
 class AvaliacoesController < ApplicationController
-  # Requer autenticação para todas as actions
-
+  # Lista avaliações ou turmas do aluno
+  # @return [void] Renderiza index ou redireciona para login
   def index
-    # Se for admin, mostrar todas as avaliações
-    # Se for aluno, mostrar todas as turmas matriculadas
-    @turmas = []  # Inicializa como array vazio por padrão
+    @turmas = []
 
     if current_user&.eh_admin?
       @avaliacoes = Avaliacao.all
     elsif current_user
-      # Alunos veem suas turmas matriculadas
       @turmas = current_user.turmas.includes(:avaliacoes)
     else
-      # Não logado - redireciona para login
       redirect_to new_session_path
     end
   end
 
+  # View de gestão de envios (admin)
+  # @return [void] Renderiza view de gestão
   def gestao_envios
     @turmas = Turma.all
   end
 
+  # Cria nova avaliação para turma
+  # @return [void] Redireciona com mensagem de sucesso/erro
+  # @efeito_colateral Cria registro Avaliacao no banco
   def create
     turma_id = params[:turma_id]
     turma = Turma.find_by(id: turma_id)
@@ -51,9 +54,10 @@ class AvaliacoesController < ApplicationController
     end
   end
 
+  # Exibe resultados com estatísticas
+  # @return [void] Renderiza HTML ou download CSV
   def resultados
     @avaliacao = Avaliacao.find(params[:id])
-    # Pré-carrega dependências para evitar N+1.
     begin
       @submissoes = @avaliacao.submissoes.includes(:aluno, :respostas)
       @perguntas = @avaliacao.modelo.perguntas.order(:id)
@@ -76,6 +80,9 @@ class AvaliacoesController < ApplicationController
 
   private
 
+  # Constrói hash de estatísticas por pergunta
+  # @param avaliacao [Avaliacao] Avaliação para analisar
+  # @return [Hash] Estatísticas por ID da pergunta
   def build_question_statistics(avaliacao)
     avaliacao.modelo.perguntas.each_with_object({}) do |pergunta, stats|
       respostas = Resposta.joins(:submissao)
@@ -83,7 +90,6 @@ class AvaliacoesController < ApplicationController
                           .where(questao_id: pergunta.id)
 
       if [ "multipla_escolha", "checkbox", "escala" ].include?(pergunta.tipo)
-        # Conta cada opção escolhida
         stats[pergunta.id] = {
           type: pergunta.tipo,
           data: respostas.group(:conteudo).count,
@@ -91,7 +97,6 @@ class AvaliacoesController < ApplicationController
           responses: []
         }
       else
-        # Para texto, inclui as respostas para exibição
         text_responses = respostas.pluck(:conteudo).compact.reject(&:blank?)
         stats[pergunta.id] = {
           type: pergunta.tipo,
