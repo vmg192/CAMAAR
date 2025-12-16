@@ -76,7 +76,7 @@ RSpec.describe SigaaImportsController, type: :controller do
           allow(File).to receive(:exist?).and_call_original
           allow(File).to receive(:exist?).with(Rails.root.join("class_members.json")).and_return(true)
           allow(File).to receive(:exist?).with(Rails.root.join("classes.json")).and_return(true)
-          
+
           mock_service = instance_double(SigaaImportService)
           allow(SigaaImportService).to receive(:new).and_return(mock_service)
           allow(mock_service).to receive(:process).and_return({
@@ -112,13 +112,13 @@ RSpec.describe SigaaImportsController, type: :controller do
       context "when import has errors" do
         it "redirects to new with error message" do
           allow(File).to receive(:exist?).and_return(true)
-          
+
           mock_service = instance_double(SigaaImportService)
           allow(SigaaImportService).to receive(:new).and_return(mock_service)
           allow(mock_service).to receive(:process).and_return({
             turmas_created: 0,
             users_created: 0,
-            errors: ["Erro de teste"]
+            errors: [ "Erro de teste" ]
           })
 
           post :create
@@ -147,7 +147,7 @@ RSpec.describe SigaaImportsController, type: :controller do
           allow(File).to receive(:exist?).and_call_original
           allow(File).to receive(:exist?).with(Rails.root.join("class_members.json")).and_return(true)
           allow(File).to receive(:exist?).with(Rails.root.join("classes.json")).and_return(true)
-          
+
           mock_service = instance_double(SigaaImportService)
           allow(SigaaImportService).to receive(:new).and_return(mock_service)
           allow(mock_service).to receive(:process).and_return({
