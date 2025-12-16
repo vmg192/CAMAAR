@@ -11,7 +11,7 @@ RSpec.describe ModelosController, type: :controller do
         {
           enunciado: "Qual o seu nome?",
           tipo: valid_question_type,
-          opcoes: [] 
+          opcoes: []
         }
       ]
     }
@@ -28,7 +28,7 @@ RSpec.describe ModelosController, type: :controller do
     if modelo.perguntas.empty?
       modelo.perguntas.build(
         enunciado: "Pergunta Obrigatória",
-        tipo: valid_question_type, 
+        tipo: valid_question_type,
         opcoes: []
       )
     end
@@ -61,7 +61,7 @@ RSpec.describe ModelosController, type: :controller do
 
   describe "GET #index" do
     it "retorna resposta de sucesso (200 OK)" do
-      create_modelo 
+      create_modelo
       get :index
       expect(response).to be_successful
     end

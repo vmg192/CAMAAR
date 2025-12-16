@@ -1,13 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe AvaliacoesController, type: :controller do
-
   let(:valid_question_type) { "texto_curto" }
 
   def create_turma
     Turma.create!(
-      codigo: "ENG-#{rand(100..999)}", 
-      nome: "Engenharia de Software", 
+      codigo: "ENG-#{rand(100..999)}",
+      nome: "Engenharia de Software",
       semestre: "2025/1"
     )
   end
@@ -37,16 +36,16 @@ RSpec.describe AvaliacoesController, type: :controller do
 
   def stub_current_user(admin: false, turmas: [])
     user = double("User", eh_admin?: admin, id: 1)
-    
+
     allow(controller).to receive(:current_user).and_return(user)
-    
+
     session_double = double("Session", user: user)
     allow(Current).to receive(:session).and_return(session_double)
     allow(Current).to receive(:user).and_return(user)
 
     unless admin
       ids = turmas.map(&:id)
-      relation = Turma.where(id: ids) 
+      relation = Turma.where(id: ids)
       allow(user).to receive(:turmas).and_return(relation)
     end
 
@@ -56,7 +55,7 @@ RSpec.describe AvaliacoesController, type: :controller do
 
   describe "GET #index" do
     context "quando o usuário NÃO está logado" do
-      before do 
+      before do
         allow(controller).to receive(:current_user).and_return(nil)
         allow(Current).to receive(:session).and_return(nil)
       end
@@ -78,9 +77,9 @@ RSpec.describe AvaliacoesController, type: :controller do
 
     context "quando o usuário é ALUNO" do
       let(:turma) { create_turma }
-      
+
       before do
-        stub_current_user(admin: false, turmas: [turma])
+        stub_current_user(admin: false, turmas: [ turma ])
       end
 
       it "retorna sucesso (200 OK)" do
@@ -105,7 +104,7 @@ RSpec.describe AvaliacoesController, type: :controller do
 
     context "Cenários de Falha" do
       it "redireciona com alerta se a Turma não for encontrada" do
-        post :create, params: { turma_id: 0 } 
+        post :create, params: { turma_id: 0 }
         expect(response).to redirect_to(gestao_envios_avaliacoes_path)
         expect(flash[:alert]).to eq("Turma não encontrada.")
       end
@@ -113,7 +112,7 @@ RSpec.describe AvaliacoesController, type: :controller do
       it "redireciona com alerta se o Template Padrão não existir" do
         Modelo.where(titulo: "Template Padrão").destroy_all
         create_modelo_generico
-        
+
         post :create, params: { turma_id: turma.id }
         expect(response).to redirect_to(gestao_envios_avaliacoes_path)
         expect(flash[:alert]).to include("Template Padrão não encontrado")
@@ -147,7 +146,7 @@ RSpec.describe AvaliacoesController, type: :controller do
 
       it "redireciona com alerta se o save falhar" do
         allow_any_instance_of(Avaliacao).to receive(:save).and_return(false)
-        allow_any_instance_of(Avaliacao).to receive_message_chain(:errors, :full_messages).and_return(["Erro no Banco"])
+        allow_any_instance_of(Avaliacao).to receive_message_chain(:errors, :full_messages).and_return([ "Erro no Banco" ])
 
         post :create, params: { turma_id: turma.id }
         expect(response).to redirect_to(gestao_envios_avaliacoes_path)
@@ -158,7 +157,7 @@ RSpec.describe AvaliacoesController, type: :controller do
 
   describe "GET #resultados" do
     before { stub_current_user(admin: true) }
-    
+
     let!(:turma) { create_turma }
     let!(:modelo) { create_modelo_generico }
     let!(:avaliacao) { create_avaliacao(turma, modelo) }
@@ -178,7 +177,7 @@ RSpec.describe AvaliacoesController, type: :controller do
         expect(flash[:alert]).to eq("Erro ao carregar submissões.")
         expect(response).to be_successful
       end
-      
+
       it "executa a lógica de estatísticas sem erro (Happy Path)" do
         get :resultados, params: { id: avaliacao.id }
         expect(response).to be_successful
@@ -189,12 +188,12 @@ RSpec.describe AvaliacoesController, type: :controller do
       it "envia o arquivo gerado pelo service" do
         csv_dummy_content = "Questao,Resposta\n1,Teste"
         service_double = instance_double("CsvFormatterService")
-        
+
         expect(CsvFormatterService).to receive(:new).with(avaliacao).and_return(service_double)
         expect(service_double).to receive(:generate).and_return(csv_dummy_content)
 
         get :resultados, params: { id: avaliacao.id }, format: :csv
-        
+
         expect(response.header['Content-Type']).to include('text/csv')
         expect(response.body).to eq(csv_dummy_content)
       end
