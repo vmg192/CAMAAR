@@ -19,7 +19,7 @@ SimpleCov.start 'rails' do
   add_filter "app/jobs"
   add_filter "app/mailers"
 
-  #Grupos para organizar o relatório visualmente
+  # Grupos para organizar o relatório visualmente
   add_group 'Controllers', 'app/controllers'
   add_group 'Models', 'app/models'
 end

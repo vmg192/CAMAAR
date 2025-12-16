@@ -30,7 +30,7 @@ RSpec.describe "Avaliações", type: :request do
 
   describe "POST /create" do
     let!(:turma) { Turma.create!(codigo: "CIC001", nome: "Turma de Teste", semestre: "2024.1") }
-    
+
     # 3. FIX: Criação do Modelo COM Pergunta (para não dar erro de validação)
     let!(:template) do
       mod = Modelo.new(titulo: "Template Padrão", ativo: true)

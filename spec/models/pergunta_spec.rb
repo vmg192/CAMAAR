@@ -33,20 +33,20 @@ RSpec.describe Pergunta, type: :model do
 
     it "lista_opcoes faz parse de string JSON" do
       pergunta = Pergunta.new(opcoes: '["A", "B"]')
-      expect(pergunta.lista_opcoes).to eq(["A", "B"])
+      expect(pergunta.lista_opcoes).to eq([ "A", "B" ])
     end
 
     it "lista_opcoes lida com string separada por ponto e vírgula" do
       pergunta = Pergunta.new(opcoes: "Opção A; Opção B")
-      expect(pergunta.lista_opcoes).to eq(["Opção A", "Opção B"])
+      expect(pergunta.lista_opcoes).to eq([ "Opção A", "Opção B" ])
     end
   end
 
   context "Validação Customizada (Refatoração)" do
     it "Múltipla escolha exige pelo menos 2 opções" do
       pergunta = Pergunta.new(
-        enunciado: "Teste", 
-        tipo: "multipla_escolha", 
+        enunciado: "Teste",
+        tipo: "multipla_escolha",
         modelo: modelo,
         opcoes: '["Apenas Uma"]'
       )
@@ -56,8 +56,8 @@ RSpec.describe Pergunta, type: :model do
 
     it "Checkbox exige pelo menos 2 opções" do
       pergunta = Pergunta.new(
-        enunciado: "Teste", 
-        tipo: "checkbox", 
+        enunciado: "Teste",
+        tipo: "checkbox",
         modelo: modelo,
         opcoes: '[]' # Vazio
       )
@@ -67,15 +67,15 @@ RSpec.describe Pergunta, type: :model do
 
     it "Múltipla escolha é válida com 2 opções" do
       pergunta = Pergunta.new(
-        enunciado: "Teste", 
-        tipo: "multipla_escolha", 
+        enunciado: "Teste",
+        tipo: "multipla_escolha",
         modelo: modelo,
         opcoes: '["A", "B"]'
       )
       expect(pergunta).to be_valid
     end
   end
-  
+
   context "Métodos Auxiliares" do
     it "tipo_humanizado retorna o nome legível" do
       pergunta = Pergunta.new(tipo: "multipla_escolha")

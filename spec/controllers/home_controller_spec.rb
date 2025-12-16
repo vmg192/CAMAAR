@@ -17,12 +17,11 @@ RSpec.describe HomeController, type: :controller do
 
   before do
     # --- MOCKS DE AUTENTICAÇÃO ---
-    
+
     allow(controller).to receive(:require_authentication).and_return(true)
     allow(controller).to receive(:authenticate_user!).and_return(true)
 
     allow(controller).to receive(:current_user).and_return(user)
-    
   end
 
   describe "GET #index" do

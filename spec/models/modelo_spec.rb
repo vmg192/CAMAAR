@@ -30,7 +30,7 @@ RSpec.describe Modelo, type: :model do
     it "valida unicidade do título (case sensitive)" do
       # Cria o primeiro
       modelo_existente
-      
+
       # Tenta criar o segundo igual
       duplicado = Modelo.new(valid_attributes)
       duplicado.perguntas.build(pergunta_attributes)
@@ -40,7 +40,7 @@ RSpec.describe Modelo, type: :model do
 
     it "aceita atributos aninhados para perguntas" do
       modelo = Modelo.new(titulo: "Nested Attrs")
-      modelo.perguntas_attributes = [pergunta_attributes]
+      modelo.perguntas_attributes = [ pergunta_attributes ]
       expect(modelo).to be_valid
       expect(modelo.perguntas.size).to eq(1)
     end
@@ -57,10 +57,10 @@ RSpec.describe Modelo, type: :model do
     it "UPDATE: impede remover todas as perguntas de um modelo existente" do
       modelo = modelo_existente
       pergunta = modelo.perguntas.first
-      
+
       # Tenta marcar a única pergunta para destruição
       pergunta.mark_for_destruction
-      
+
       expect(modelo).not_to be_valid
       expect(modelo.errors[:base]).to include("Não é possível remover todas as perguntas de um modelo existente")
     end
@@ -76,7 +76,7 @@ RSpec.describe Modelo, type: :model do
         turma = Turma.create!(codigo: "T1", nome: "Turma Teste", semestre: "2024.1")
         # Cria uma avaliação fake associada
         Avaliacao.create!(modelo: modelo_existente, turma: turma)
-        
+
         expect(modelo_existente.em_uso?).to be true
       end
     end

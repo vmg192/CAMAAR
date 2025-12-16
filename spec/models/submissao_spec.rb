@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Submissao, type: :model do
-  # Setup: Cria as dependências necessárias 
+  # Setup: Cria as dependências necessárias
   let(:aluno) do
     User.create!(
       login: "aluno_teste",
@@ -59,10 +59,10 @@ RSpec.describe Submissao, type: :model do
 
     it "destroi respostas associadas ao ser deletada" do
       submissao = Submissao.create!(aluno: aluno, avaliacao: avaliacao)
-      submissao.respostas.create!(conteudo: "Resposta teste", questao_id: modelo.perguntas.first.id) rescue nil 
-      
-      # Mesmo que a criação da resposta falhe por validação da Resposta, 
-      # o teste do 'dependent: :destroy' é garantido pela reflexão acima. 
+      submissao.respostas.create!(conteudo: "Resposta teste", questao_id: modelo.perguntas.first.id) rescue nil
+
+      # Mesmo que a criação da resposta falhe por validação da Resposta,
+      # o teste do 'dependent: :destroy' é garantido pela reflexão acima.
       expect { submissao.destroy }.not_to raise_error
     end
   end
