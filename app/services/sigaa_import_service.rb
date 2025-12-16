@@ -1,7 +1,12 @@
 require "json"
 require "csv"
 
+# Serviço para importar dados do SIGAA
+# Processa JSON ou CSV com turmas e usuários
 class SigaaImportService
+  # Inicializa serviço
+  # @param file_path [Pathname] Caminho do arquivo class_members.json
+  # @param classes_file_path [Pathname] Caminho do arquivo classes.json (opcional)
   def initialize(file_path, classes_file_path = nil)
     @file_path = file_path
     @classes_file_path = classes_file_path
@@ -10,11 +15,14 @@ class SigaaImportService
       turmas_updated: 0,
       users_created: 0,
       users_updated: 0,
-      new_users: [],  # Array de hashes com credenciais dos novos usuários
+      new_users: [],
       errors: []
     }
   end
 
+  # Processa arquivo e importa dados
+  # @return [Hash] Resultados com contagens e erros
+  # @efeito_colateral Cria/atualiza Turma, User, MatriculaTurma
   def process
     unless File.exist?(@file_path)
       @results[:errors] << "Arquivo não encontrado: #{@file_path}"
@@ -49,17 +57,16 @@ class SigaaImportService
 
   private
 
+  # Processa arquivo JSON
+  # @return [void]
   def process_json
     data = JSON.parse(File.read(@file_path))
     classes_lookup = build_classes_lookup
 
-    # class_members.json é um array de turmas
     data.each do |turma_data|
-      # Busca o nome real da turma em classes.json
       class_key = [ turma_data["code"], turma_data["semester"] ]
       class_name = classes_lookup[class_key] || turma_data["code"]
 
-      # Mapeia campos do formato real para o esperado
       normalized_data = {
         "codigo" => turma_data["code"],
         "nome" => class_name,
@@ -67,7 +74,6 @@ class SigaaImportService
         "participantes" => []
       }
 
-      # Processa dicentes (alunos)
       if turma_data["dicente"]
         turma_data["dicente"].each do |dicente|
           normalized_data["participantes"] << {
@@ -79,7 +85,6 @@ class SigaaImportService
         end
       end
 
-      # Processa docente (professor)
       if turma_data["docente"]
         docente = turma_data["docente"]
         normalized_data["participantes"] << {
@@ -94,14 +99,14 @@ class SigaaImportService
     end
   end
 
-  # Constrói um hash de lookup para nomes de turmas a partir de classes.json
+  # Constrói lookup de nomes de turmas
+  # @return [Hash] Mapa code+semester => nome
   def build_classes_lookup
     return {} unless @classes_file_path && File.exist?(@classes_file_path)
 
     begin
       classes_data = JSON.parse(File.read(@classes_file_path))
       classes_data.each_with_object({}) do |item, hash|
-        # Usa code + semester como chave composta
         key = [ item["code"], item.dig("class", "semester") ]
         hash[key] = item["name"]
       end
@@ -111,9 +116,10 @@ class SigaaImportService
     end
   end
 
+  # Processa arquivo CSV
+  # @return [void]
   def process_csv
     CSV.foreach(@file_path, headers: true, col_sep: ",") do |row|
-      # Assumindo estrutura do CSV
       turma_data = {
         "codigo" => row["codigo_turma"],
         "nome" => row["nome_turma"],
@@ -134,6 +140,9 @@ class SigaaImportService
     end
   end
 
+  # Processa dados de turma
+  # @param data [Hash] Dados da turma
+  # @return [void]
   def process_turma(data)
     turma = process_turma_record(data)
     if turma&.persisted?
@@ -141,6 +150,9 @@ class SigaaImportService
     end
   end
 
+  # Cria/atualiza registro de turma
+  # @param data [Hash] Dados da turma
+  # @return [Turma, nil]
   def process_turma_record(data)
     turma = Turma.find_or_initialize_by(codigo: data["codigo"], semestre: data["semestre"])
 
@@ -160,21 +172,27 @@ class SigaaImportService
     end
   end
 
+  # Processa lista de participantes
+  # @param turma [Turma]
+  # @param participantes_data [Array<Hash>]
+  # @return [void]
   def process_participantes(turma, participantes_data)
     participantes_data.each do |p_data|
       process_participante_single(turma, p_data)
     end
   end
 
+  # Processa um participante
+  # @param turma [Turma]
+  # @param p_data [Hash] Dados do participante
+  # @return [void]
+  # @efeito_colateral Cria/atualiza User e MatriculaTurma
   def process_participante_single(turma, p_data)
-    # User identificado pela matrícula
     user = User.find_or_initialize_by(matricula: p_data["matricula"])
 
     is_new_user = user.new_record?
     user.nome = p_data["nome"]
     user.email_address = p_data["email"]
-
-    # Generate login from matricula if not present (assuming matricula is unique and good for login)
     user.login = p_data["matricula"] if user.login.blank?
 
     generated_password = nil
@@ -186,8 +204,6 @@ class SigaaImportService
     if user.save
       if is_new_user
         @results[:users_created] += 1
-
-        # Armazena credenciais do novo usuário para exibir depois
         @results[:new_users] << {
           matricula: user.matricula,
           nome: user.nome,
@@ -195,9 +211,6 @@ class SigaaImportService
           password: generated_password,
           email: user.email_address
         }
-
-        # Envia email com senha para novo usuário (COMENTADO - muito lento)
-        # UserMailer.cadastro_email(user, generated_password).deliver_now
       else
         @results[:users_updated] += 1
       end

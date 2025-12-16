@@ -1,9 +1,13 @@
+# Controlador base para todos os controladores da aplicação
+# Inclui autenticação e compatibilidade de navegador
 class ApplicationController < ActionController::Base
   include Authentication
   include Authenticatable
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
+  # Apenas permite navegadores modernos
   allow_browser versions: :modern
 
+  # Ação padrão do index
+  # @return [void]
   def index
   end
 end

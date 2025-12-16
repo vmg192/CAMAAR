@@ -1,5 +1,4 @@
-# Classe que representa um usuário do sistema.
-# Responsável pela autenticação, dados cadastrais e relação com turmas e submissões.
+# Representa um usuário do sistema (admin, professor ou aluno)
 class User < ApplicationRecord
   # Adiciona métodos para definir e autenticar senhas usando BCrypt.
   #

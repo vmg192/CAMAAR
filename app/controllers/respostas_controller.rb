@@ -1,34 +1,36 @@
-# app/controllers/respostas_controller.rb
+# Gerencia respostas de avaliações pelos alunos
 class RespostasController < ApplicationController
   before_action :authenticate_user!
   before_action :set_avaliacao, only: [ :new, :create ]
   before_action :verificar_disponibilidade, only: [ :new, :create ]
   before_action :verificar_nao_respondeu, only: [ :new, :create ]
 
+  # Redireciona para root
+  # @return [void] Redirect para página principal
   def index
-    # Feature 109: Listagem de avaliações pendentes (já implementado em pages#index)
     redirect_to root_path
   end
 
+  # Exibe formulário de resposta
+  # @return [void] Renderiza form com perguntas
   def new
-    # Feature 99: Tela para responder avaliação
     @submissao = Submissao.new
     @perguntas = @avaliacao.modelo.perguntas.order(:id)
 
-    # Pre-build respostas para nested attributes
     @perguntas.each do |pergunta|
       @submissao.respostas.build(pergunta_id: pergunta.id)
     end
   end
 
+  # Salva respostas da avaliação
+  # @return [void] Redireciona para root em sucesso, form em erro
+  # @efeito_colateral Cria registros Submissao e Resposta
   def create
-    # Feature 99: Salvar respostas
     @submissao = Submissao.new(submissao_params)
     @submissao.avaliacao = @avaliacao
     @submissao.aluno = current_user
     @submissao.data_envio = Time.current
 
-    # Adicionar snapshots nas respostas
     @submissao.respostas.each do |resposta|
       if resposta.pergunta_id
         pergunta = Pergunta.find_by(id: resposta.pergunta_id)
@@ -50,12 +52,15 @@ class RespostasController < ApplicationController
 
   private
 
+  # Encontra avaliação por ID
+  # @return [Avaliacao]
   def set_avaliacao
     @avaliacao = Avaliacao.find(params[:avaliacao_id])
   end
 
+  # Verifica se avaliação está no prazo
+  # @return [void] Redireciona se expirada ou não iniciada
   def verificar_disponibilidade
-    # Verifica se avaliação ainda está no prazo
     if @avaliacao.data_fim && @avaliacao.data_fim < Time.current
       redirect_to root_path, alert: "Esta avaliação já foi encerrada."
     elsif @avaliacao.data_inicio && @avaliacao.data_inicio > Time.current
@@ -63,13 +68,16 @@ class RespostasController < ApplicationController
     end
   end
 
+  # Verifica se aluno já respondeu
+  # @return [void] Redireciona se já respondeu
   def verificar_nao_respondeu
-    # Verifica se aluno já respondeu
     if Submissao.exists?(avaliacao: @avaliacao, aluno: current_user)
       redirect_to root_path, alert: "Você já respondeu esta avaliação."
     end
   end
 
+  # Parâmetros permitidos para submissão
+  # @return [ActionController::Parameters]
   def submissao_params
     params.require(:submissao).permit(
       respostas_attributes: [ :pergunta_id, :conteudo, :snapshot_enunciado, :snapshot_opcoes ]

@@ -1,3 +1,5 @@
+# Representa uma avaliação de uma turma
+# Vincula turma a um modelo de formulário
 class Avaliacao < ApplicationRecord
   belongs_to :turma
   belongs_to :modelo
